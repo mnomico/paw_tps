@@ -71,7 +71,7 @@
 
       <!-- Barra lateral de filtros -->
       <aside aria-labelledby="titulo-filtros">
-        <h2 id="titulo-filtros">Filtros</h2>
+        <h3 id="titulo-filtros">Filtros</h3>
         
         <form action="catalogo.html" method="get">
           
@@ -150,7 +150,7 @@
 
       <!-- Lista de Libros -->
       <section aria-labelledby="titulo-lista-libros">
-        <h2 id="titulo-lista-libros">Resultados</h2>
+        <h3 id="titulo-lista-libros">Resultados</h3>
 
         <!-- Encabezado con estado y ordenamiento -->
         <p>Mostrando <strong>6 libros</strong> de <em>Ficción</em></p>
@@ -163,6 +163,7 @@
             <option value="precio-desc">Precio: Mayor a Menor</option>
             <option value="titulo-az">Título: A - Z</option>
           </select>
+          <button type="submit">Ordenar</button>
         </form>
 
         <!-- Grilla / Lista de Libros -->
@@ -170,120 +171,108 @@
           <!-- Libro 1 -->
           <li>
             <article>
-              <a href="detalle-libro.html?id=1">
-                <figure>
-                  <img src="https://via.placeholder.com/300x400?text=LIBRO+1" alt="Portada del libro El Laberinto de los Vientos">
-                  <figcaption>LIBRO 1</figcaption>
-                </figure>
-                <header>
-                  <p><small>GÉNERO: Ficción</small></p>
-                  <h3>El Laberinto de los Vientos</h3>
-                  <p><strong>Autor:</strong> Salvador Báez</p>
-                </header>
-                <p><small><strong>Descripción:</strong> Una misteriosa travesía a través de ciudades olvidadas donde las ráfagas del viento custodian antiguos secretos.</small></p>
-                <p><strong>Precio:</strong> <data value="16500">$16.500</data></p>
-                <p><span>Ver detalles &rarr;</span></p>
-              </a>
+              <figure>
+                <img src="https://via.placeholder.com/300x400?text=LIBRO+1" alt="Portada del libro El Laberinto de los Vientos">
+                <figcaption>LIBRO 1</figcaption>
+              </figure>
+              <header>
+                <p><small>GÉNERO: Ficción</small></p>
+                <h4><a href="detalle-libro.html?id=1">El Laberinto de los Vientos</a></h4>
+                <p><strong>Autor:</strong> Salvador Báez</p>
+              </header>
+              <p><small><strong>Descripción:</strong> Una misteriosa travesía a través de ciudades olvidadas donde las ráfagas del viento custodian antiguos secretos.</small></p>
+              <p><strong>Precio:</strong> <data value="16500">$16.500</data></p>
+              <p><a href="detalle-libro.html?id=1">Ver detalles &rarr;</a></p>
             </article>
           </li>
 
           <!-- Libro 2 -->
           <li>
             <article>
-              <a href="detalle-libro.html?id=2">
-                <figure>
-                  <img src="https://via.placeholder.com/300x400?text=LIBRO+2" alt="Portada del libro El Secreto de la Torre">
-                  <figcaption>LIBRO 2</figcaption>
-                </figure>
-                <header>
-                  <p><small>GÉNERO: Ficción</small></p>
-                  <h3>El Secreto de la Torre</h3>
-                  <p><strong>Autor:</strong> Tomás Resnik</p>
-                </header>
-                <p><small><strong>Descripción:</strong> Una intriga detectivesca en una fortaleza medieval donde cada manuscrito encierra un dilema peligroso.</small></p>
-                <p><strong>Precio:</strong> <data value="14000">$14.000</data></p>
-                <p><span>Ver detalles &rarr;</span></p>
-              </a>
+              <figure>
+                <img src="https://via.placeholder.com/300x400?text=LIBRO+2" alt="Portada del libro El Secreto de la Torre">
+                <figcaption>LIBRO 2</figcaption>
+              </figure>
+              <header>
+                <p><small>GÉNERO: Ficción</small></p>
+                <h4><a href="detalle-libro.html?id=2">El Secreto de la Torre</a></h4>
+                <p><strong>Autor:</strong> Tomás Resnik</p>
+              </header>
+              <p><small><strong>Descripción:</strong> Una intriga detectivesca en una fortaleza medieval donde cada manuscrito encierra un dilema peligroso.</small></p>
+              <p><strong>Precio:</strong> <data value="14000">$14.000</data></p>
+              <p><a href="detalle-libro.html?id=2">Ver detalles &rarr;</a></p>
             </article>
           </li>
 
           <!-- Libro 3 -->
           <li>
             <article>
-              <a href="detalle-libro.html?id=3">
-                <figure>
-                  <img src="https://via.placeholder.com/300x400?text=LIBRO+3" alt="Portada del libro Sombras en el Horizonte">
-                  <figcaption>LIBRO 3</figcaption>
-                </figure>
-                <header>
-                  <p><small>GÉNERO: Ficción</small></p>
-                  <h3>Sombras en el Horizonte</h3>
-                  <p><strong>Autor:</strong> Mateo Nómico</p>
-                </header>
-                <p><small><strong>Descripción:</strong> Una novela profunda sobre viajes marítimos, horizontes lejanos y la búsqueda constante de libertad.</small></p>
-                <p><strong>Precio:</strong> <data value="15800">$15.800</data></p>
-                <p><span>Ver detalles &rarr;</span></p>
-              </a>
+              <figure>
+                <img src="https://via.placeholder.com/300x400?text=LIBRO+3" alt="Portada del libro Sombras en el Horizonte">
+                <figcaption>LIBRO 3</figcaption>
+              </figure>
+              <header>
+                <p><small>GÉNERO: Ficción</small></p>
+                <h4><a href="detalle-libro.html?id=3">Sombras en el Horizonte</a></h4>
+                <p><strong>Autor:</strong> Mateo Nómico</p>
+              </header>
+              <p><small><strong>Descripción:</strong> Una novela profunda sobre viajes marítimos, horizontes lejanos y la búsqueda constante de libertad.</small></p>
+              <p><strong>Precio:</strong> <data value="15800">$15.800</data></p>
+              <p><a href="detalle-libro.html?id=3">Ver detalles &rarr;</a></p>
             </article>
           </li>
 
           <!-- Libro 4 -->
           <li>
             <article>
-              <a href="detalle-libro.html?id=4">
-                <figure>
-                  <img src="https://via.placeholder.com/300x400?text=LIBRO+4" alt="Portada del libro Ecos del Cosmos">
-                  <figcaption>LIBRO 4</figcaption>
-                </figure>
-                <header>
-                  <p><small>GÉNERO: Ciencia</small></p>
-                  <h3>Ecos del Cosmos</h3>
-                  <p><strong>Autor:</strong> Salvador Báez</p>
-                </header>
-                <p><small><strong>Descripción:</strong> Un recorrido fascinante por los misterios del universo, ondas de radio interestelares y física teórica.</small></p>
-                <p><strong>Precio:</strong> <data value="17200">$17.200</data></p>
-                <p><span>Ver detalles &rarr;</span></p>
-              </a>
+              <figure>
+                <img src="https://via.placeholder.com/300x400?text=LIBRO+4" alt="Portada del libro Ecos del Cosmos">
+                <figcaption>LIBRO 4</figcaption>
+              </figure>
+              <header>
+                <p><small>GÉNERO: Ciencia</small></p>
+                <h4><a href="detalle-libro.html?id=4">Ecos del Cosmos</a></h4>
+                <p><strong>Autor:</strong> Salvador Báez</p>
+              </header>
+              <p><small><strong>Descripción:</strong> Un recorrido fascinante por los misterios del universo, ondas de radio interestelares y física teórica.</small></p>
+              <p><strong>Precio:</strong> <data value="17200">$17.200</data></p>
+              <p><a href="detalle-libro.html?id=4">Ver detalles &rarr;</a></p>
             </article>
           </li>
 
           <!-- Libro 5 -->
           <li>
             <article>
-              <a href="detalle-libro.html?id=5">
-                <figure>
-                  <img src="https://via.placeholder.com/300x400?text=LIBRO+5" alt="Portada del libro Crónicas del Tiempo Olvidado">
-                  <figcaption>LIBRO 5</figcaption>
-                </figure>
-                <header>
-                  <p><small>GÉNERO: Historia</small></p>
-                  <h3>Crónicas del Tiempo Olvidado</h3>
-                  <p><strong>Autor:</strong> Tomás Resnik</p>
-                </header>
-                <p><small><strong>Descripción:</strong> Un compendio de pasajes históricos poco conocidos que transformaron el rumbo de antiguas civilizaciones.</small></p>
-                <p><strong>Precio:</strong> <data value="18500">$18.500</data></p>
-                <p><span>Ver detalles &rarr;</span></p>
-              </a>
+              <figure>
+                <img src="https://via.placeholder.com/300x400?text=LIBRO+5" alt="Portada del libro Crónicas del Tiempo Olvidado">
+                <figcaption>LIBRO 5</figcaption>
+              </figure>
+              <header>
+                <p><small>GÉNERO: Historia</small></p>
+                <h4><a href="detalle-libro.html?id=5">Crónicas del Tiempo Olvidado</a></h4>
+                <p><strong>Autor:</strong> Tomás Resnik</p>
+              </header>
+              <p><small><strong>Descripción:</strong> Un compendio de pasajes históricos poco conocidos que transformaron el rumbo de antiguas civilizaciones.</small></p>
+              <p><strong>Precio:</strong> <data value="18500">$18.500</data></p>
+              <p><a href="detalle-libro.html?id=5">Ver detalles &rarr;</a></p>
             </article>
           </li>
 
           <!-- Libro 6 -->
           <li>
             <article>
-              <a href="detalle-libro.html?id=6">
-                <figure>
-                  <img src="https://via.placeholder.com/300x400?text=LIBRO+6" alt="Portada del libro La Arquitectura de la Mente">
-                  <figcaption>LIBRO 6</figcaption>
-                </figure>
-                <header>
-                  <p><small>GÉNERO: Arte &amp; Diseño</small></p>
-                  <h3>La Arquitectura de la Mente</h3>
-                  <p><strong>Autor:</strong> Mateo Nómico</p>
-                </header>
-                <p><small><strong>Descripción:</strong> Un ensayo visual y conceptual sobre cómo la percepción del espacio moldea las ideas creativas.</small></p>
-                <p><strong>Precio:</strong> <data value="13900">$13.900</data></p>
-                <p><span>Ver detalles &rarr;</span></p>
-              </a>
+              <figure>
+                <img src="https://via.placeholder.com/300x400?text=LIBRO+6" alt="Portada del libro La Arquitectura de la Mente">
+                <figcaption>LIBRO 6</figcaption>
+              </figure>
+              <header>
+                <p><small>GÉNERO: Arte &amp; Diseño</small></p>
+                <h4><a href="detalle-libro.html?id=6">La Arquitectura de la Mente</a></h4>
+                <p><strong>Autor:</strong> Mateo Nómico</p>
+              </header>
+              <p><small><strong>Descripción:</strong> Un ensayo visual y conceptual sobre cómo la percepción del espacio moldea las ideas creativas.</small></p>
+              <p><strong>Precio:</strong> <data value="13900">$13.900</data></p>
+              <p><a href="detalle-libro.html?id=6">Ver detalles &rarr;</a></p>
             </article>
           </li>
         </ul>
@@ -332,13 +321,11 @@
 
     <section>
       <h2>Seguinos</h2>
-      <!-- Las cuentas todavía no existen, así que se listan las plataformas sin
-           href: inventar URLs contra dominios reales daría 404. Cuando el grupo
-           defina los perfiles, los enlaces se agregan acá. -->
       <ul>
-        <li>Instagram</li>
-        <li>Facebook</li>
-        <li>X</li>
+        <!-- rel="external" deja explícito que salen del sitio. -->
+        <li><a href="https://www.instagram.com/" rel="external">Instagram</a></li>
+        <li><a href="https://www.facebook.com/" rel="external">Facebook</a></li>
+        <li><a href="https://x.com/" rel="external">X</a></li>
       </ul>
     </section>
 
