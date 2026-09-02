@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Detalle del libro — PAWPrints</title>
+  <meta name="description" content="Ficha completa del libro: descripción, datos del autor y opción de reserva.">
+</head>
+<body>
+
+  <!-- ============================================================
+       HEADER — compartido por las 5 pantallas del wireframe.
+       Al no haber servidor hasta el TP3, no hay includes: este bloque
+       se copia tal cual en cada página y solo cambia el aria-current.
+       ============================================================ -->
+  <header>
+
+    <!-- El nombre de la marca va como enlace y no como encabezado para no
+         competir con el <h1> de cada página, que describe su contenido. -->
+    <p><a href="index.html">PAWPrints — Librería</a></p>
+
+    <nav aria-label="Navegación principal">
+      <ul>
+        <!-- aria-current marca la página activa: es el equivalente semántico
+             al resaltado en terracota que el wireframe le da al ítem actual. -->
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="catalogo.html" aria-current="page">Catálogo</a></li>
+        <li><a href="sobre-nosotros.html">Sobre Nosotros</a></li>
+      </ul>
+    </nav>
+
+    <!-- La lupa del wireframe: el GET contra el catálogo es la forma de
+         expresar una búsqueda sin JavaScript ni procesamiento en servidor.
+         <search> ya aporta por sí solo el rol de búsqueda, por eso el <form>
+         no lleva role="search": ponerlo anidaría dos landmarks iguales. -->
+    <search>
+      <form action="catalogo.html" method="get">
+        <label for="busqueda">Buscar libros</label>
+        <input type="search" id="busqueda" name="q" placeholder="Título, autor o género">
+        <button type="submit">Buscar</button>
+      </form>
+    </search>
+
+    <p><a href="carrito.html">Carrito (2)</a></p>
+
+  </header>
+
+  <hr>
+
+  <main>
+
+    <!-- ============================================================
+         PONGAN EL CÓDIGO DE SU PÁGINA ACÁ
+
+         - Todo el contenido va adentro de este <main>.
+         - El <h1> de la página va acá adentro: uno solo por página.
+         - Los encabezados de las secciones arrancan en <h2>, porque el
+           <h2> del footer ya está en ese nivel.
+         - No toquen el <header> ni el <footer>: son idénticos en las 5
+           páginas y lo único que cambia es el aria-current del <nav>.
+         - Recordar: TP1 es HTML5 puro, sin CSS ni JavaScript.
+         ============================================================ -->
+
+  </main>
+
+  <hr>
+
+  <!-- ============================================================
+       FOOTER — también compartido por las 5 pantallas.
+       Cubre el punto "Información de contacto" del enunciado.
+       ============================================================ -->
+  <footer>
+
+    <section>
+      <h2>PAWPrints</h2>
+      <p>
+        Un santuario para las palabras impresas y las almas lectoras.
+        Visitanos en nuestra tienda física en Mercedes o explorá todo
+        nuestro catálogo en línea.
+      </p>
+    </section>
+
+    <nav aria-label="Navegación del pie de página">
+      <h2>Navegación</h2>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="catalogo.html">Catálogo completo</a></li>
+        <li><a href="sobre-nosotros.html">Sobre Nosotros</a></li>
+      </ul>
+    </nav>
+
+    <section>
+      <h2>Contacto &amp; Visita</h2>
+      <!-- <address> es el tag específico para los datos de contacto del sitio;
+           tel: y mailto: hacen que el dato sea accionable sin JavaScript. -->
+      <address>
+        Instituto Uzue, Mercedes, Buenos Aires, Argentina<br>
+        Teléfono: <a href="tel:+54190168">+54 190168</a><br>
+        Correo: <a href="mailto:contacto@pawprints.com.ar">contacto@pawprints.com.ar</a>
+      </address>
+      <p>Horario de atención: lunes a sábados de 9 a 20 h.</p>
+    </section>
+
+    <section>
+      <h2>Seguinos</h2>
+      <ul>
+        <!-- rel="external" deja explícito que salen del sitio. -->
+        <li><a href="https://www.instagram.com/pawprints" rel="external">Instagram</a></li>
+        <li><a href="https://www.facebook.com/pawprints" rel="external">Facebook</a></li>
+        <li><a href="https://x.com/pawprints" rel="external">X</a></li>
+      </ul>
+    </section>
+
+    <hr>
+
+    <p><small>&copy; 2026 Librería PAWPrints. Todos los derechos reservados.</small></p>
+    <p><small>Mercedes, Argentina</small></p>
+
+  </footer>
+
+</body>
+</html>
