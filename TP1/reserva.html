@@ -50,16 +50,228 @@
   <main>
 
     <!-- ============================================================
-         PONGAN EL CÓDIGO DE SU PÁGINA ACÁ
+         RESERVA DE LIBRO
 
-         - Todo el contenido va adentro de este <main>.
-         - El <h1> de la página va acá adentro: uno solo por página.
-         - Los encabezados de las secciones arrancan en <h2>, porque el
-           <h2> del footer ya está en ese nivel.
-         - No toquen el <header> ni el <footer>: son idénticos en las 5
-           páginas y lo único que cambia es el aria-current del <nav>.
-         - Recordar: TP1 es HTML5 puro, sin CSS ni JavaScript.
+         Layout de dos columnas (según wireframe):
+           - Columna principal (izquierda): formulario de reserva.
+           - Columna secundaria (derecha): tarjeta de resumen del libro.
+
+         Decisiones semánticas del formulario:
+           · type="text"     → nombre completo (texto libre)
+           · type="email"    → correo electrónico (valida formato @)
+           · type="tel"      → teléfono (activa teclado numérico en móvil)
+           · <select>        → lista cerrada de libros (evita errores tipográficos)
+           · type="number"   → cantidad (solo enteros positivos; min/max acotados)
+           · <textarea>      → comentarios largos de forma libre
+           · required        → campos obligatorios marcados en el wireframe con *
+           · autocomplete    → ayuda al navegador a completar datos del usuario
+           · maxlength       → límite razonable para nombre y teléfono
+           · pattern         → refuerza el formato del teléfono en navegadores que
+                               no implementan validación nativa de tel
+
+         El <form> usa method="post" porque transmite datos personales que no
+         deben quedar expuestos en la URL ni en el historial del navegador.
          ============================================================ -->
+
+    <!-- Encabezado de la sección -->
+    <section aria-labelledby="titulo-reserva">
+      <h1 id="titulo-reserva">Formulario de Reserva</h1>
+      <p>
+        Reservá tu ejemplar de manera gratuita y retiralo en nuestra
+        librería física en Mercedes cuando te convenga.
+      </p>
+    </section>
+
+    <!-- Cuerpo principal: formulario + resumen del libro -->
+    <section aria-label="Contenido de la página de reserva">
+
+      <!-- ── COLUMNA IZQUIERDA: Formulario de reserva ── -->
+      <article aria-labelledby="subtitulo-formulario">
+        <h2 id="subtitulo-formulario" hidden>Datos de la reserva</h2>
+
+        <form action="confirmacion-reserva.html" method="post"
+              aria-labelledby="titulo-reserva"
+              novalidate>
+          <!--
+            novalidate: en un TP de HTML puro se deja para poder ver la
+            estructura sin que el navegador bloquee el submit. En producción
+            se eliminaría para activar la validación nativa.
+          -->
+
+          <!-- ── Datos de contacto del solicitante ── -->
+          <fieldset>
+            <legend>Datos del solicitante</legend>
+
+            <!-- Nombre completo -->
+            <div>
+              <label for="nombre">Nombre completo <abbr title="campo obligatorio">*</abbr></label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                placeholder="Ej. Juan Pérez García"
+                required
+                maxlength="100"
+                autocomplete="name"
+              >
+            </div>
+
+            <!-- Correo electrónico y Teléfono en la misma fila (wireframe) -->
+            <div>
+              <!-- Correo electrónico -->
+              <div>
+                <label for="email">Correo electrónico <abbr title="campo obligatorio">*</abbr></label>
+                <!--
+                  type="email": el navegador valida que haya un "@" y un dominio
+                  antes de aceptar el envío del formulario.
+                -->
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="juan.perez@ejemplo.com"
+                  required
+                  maxlength="254"
+                  autocomplete="email"
+                >
+              </div>
+
+              <!-- Teléfono de contacto -->
+              <div>
+                <label for="telefono">Teléfono de contacto <abbr title="campo obligatorio">*</abbr></label>
+                <!--
+                  type="tel": activa el teclado numérico en dispositivos móviles.
+                  No valida el formato por sí solo; pattern complementa esa tarea.
+                  El patrón acepta: +54 9 11 1234-5678, 011 4123-4567, 2324 12345, etc.
+                -->
+                <input
+                  type="tel"
+                  id="telefono"
+                  name="telefono"
+                  placeholder="+54 9 11 1234-5678"
+                  required
+                  maxlength="20"
+                  pattern="[\+]?[\d\s\-\(\)]{7,20}"
+                  autocomplete="tel"
+                >
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- ── Datos del libro a reservar ── -->
+          <fieldset>
+            <legend>Datos del libro</legend>
+
+            <!-- Selección del libro -->
+            <div>
+              <label for="libro">Seleccioná el libro a reservar <abbr title="campo obligatorio">*</abbr></label>
+              <!--
+                <select>: lista cerrada garantiza que se envíe un valor conocido
+                por el sistema; el id del libro como value simplifica el backend.
+              -->
+              <select id="libro" name="libro_id" required>
+                <option value="" disabled selected>— Seleccioná un libro —</option>
+                <optgroup label="Ficción">
+                  <option value="1">El Laberinto de los Vientos — Salvador Báez</option>
+                  <option value="2">El Secreto de la Torre — Tomás Resnik</option>
+                  <option value="3">Sombras en el Horizonte — Mateo Nómico</option>
+                </optgroup>
+                <optgroup label="Ciencia">
+                  <option value="4">Ecos del Cosmos — Salvador Báez</option>
+                </optgroup>
+                <optgroup label="Historia">
+                  <option value="5">Crónicas del Tiempo Olvidado — Tomás Resnik</option>
+                </optgroup>
+                <optgroup label="Arte &amp; Diseño">
+                  <option value="6">La Arquitectura de la Mente — Mateo Nómico</option>
+                </optgroup>
+                <option value="otro">Guía de Como aprobar PAW y sobrevivir en el intento</option>
+              </select>
+            </div>
+
+            <!-- Cantidad -->
+            <div>
+              <label for="cantidad">Cantidad <abbr title="campo obligatorio">*</abbr></label>
+              <!--
+                type="number": renderiza controles de incremento/decremento.
+                min="1" impide cantidades cero o negativas.
+                max="5" limita a 5 ejemplares por reserva (política de la tienda).
+                value="1" establece el valor por defecto que muestra el wireframe.
+              -->
+              <input
+                type="number"
+                id="cantidad"
+                name="cantidad"
+                value="1"
+                min="1"
+                max="5"
+                required
+              >
+              <small>Máximo 5 ejemplares por reserva.</small>
+            </div>
+          </fieldset>
+
+          <!-- ── Información adicional ── -->
+          <fieldset>
+            <legend>Información adicional</legend>
+
+            <!-- Comentarios -->
+            <div>
+              <label for="comentarios">Comentarios adicionales</label>
+              <!--
+                <textarea>: campo de texto largo y de forma libre; ideal para
+                instrucciones sin estructura predefinida. No lleva required porque
+                en el wireframe no está marcado como obligatorio.
+                rows="5" orienta visualmente al usuario sobre el espacio disponible.
+              -->
+              <textarea
+                id="comentarios"
+                name="comentarios"
+                rows="5"
+                maxlength="500"
+                placeholder="¿Deseás que lo envolvamos para regalo? ¿Alguna instrucción sobre la recogida?"
+              ></textarea>
+            </div>
+          </fieldset>
+
+          <!-- Botón de envío -->
+          <div>
+            <button type="submit">Enviar Reserva</button>
+          </div>
+
+        </form>
+      </article>
+
+      <!-- ── COLUMNA DERECHA: Resumen del libro seleccionado ── -->
+      <aside aria-labelledby="titulo-resumen-libro">
+        <h2 id="titulo-resumen-libro" hidden>Resumen del libro</h2>
+
+        <!-- Tarjeta del libro (datos estáticos de ejemplo, como en el wireframe) -->
+        <article aria-labelledby="nombre-libro-resumen">
+          <header>
+            <!-- El número grande "Libro 1" del wireframe es decorativo;
+                 el título real es el dato significativo. -->
+            <p><strong>Libro 1</strong></p>
+            <h3 id="nombre-libro-resumen">El Laberinto de los Vientos</h3>
+            <p>Salvador Báez</p>
+            <p><strong><data value="16500">$16.500</data></strong></p>
+          </header>
+
+          <hr>
+
+          <!-- Beneficios de la reserva -->
+          <section aria-labelledby="titulo-beneficios">
+            <h3 id="titulo-beneficios" hidden>Beneficios de reservar en tienda</h3>
+            <ul>
+              <li>Te guardaremos el libro por 10 días laborables.</li>
+              <li>Recibirás un SMS y correo electrónico de confirmación.</li>
+              <li>Pago directo al retirarlo en tienda física.</li>
+            </ul>
+          </section>
+        </article>
+      </aside>
+
+    </section><!-- fin sección contenido -->
 
   </main>
 
