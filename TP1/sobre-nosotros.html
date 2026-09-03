@@ -61,6 +61,125 @@
          - Recordar: TP1 es HTML5 puro, sin CSS ni JavaScript.
          ============================================================ -->
 
+    <!-- ============================================================
+         HERO — Foto de la entrada de la tienda con tagline superpuesto.
+         Se usa <figure> porque la imagen está directamente relacionada
+         con el texto que la acompaña (<figcaption>).
+         ============================================================ -->
+    <figure>
+      <!-- Sin CSS no se puede superponer texto sobre imagen, por eso el
+           alt describe la escena y el figcaption aporta el mensaje de marca. -->
+      <img src="../img/entrada-tienda.jpg" alt="Entrada de la librería PAWPrints en Mercedes, Buenos Aires">
+      <figcaption>
+        <!-- El h1 describe el contenido de ESTA página, no de toda la tienda. -->
+        <h1>Nuestra Casa de Palabras</h1>
+        <p>Un proyecto familiar nacido de la pasión compartida por los libros y la comunidad.</p>
+      </figcaption>
+    </figure>
+
+    <!-- ============================================================
+         HISTORIA — Texto fundacional + pilares de la empresa.
+         <article> porque es contenido autocontenido: tiene sentido
+         por sí solo fuera de contexto (podría sindicarse como nota).
+         ============================================================ -->
+    <article>
+
+      <!-- <section> agrupa el relato cronológico de la historia. -->
+      <section>
+        <!-- <time> marca la fecha de fundación de manera semántica y
+             machine-readable; datetime usa el formato ISO 8601. -->
+        <p><time datetime="2011">Desde 2011</time></p>
+        <h2>Nuestra Historia</h2>
+        <p>Historia de cómo se creó PAWPrint: una librería fundada en 2011 con el sueño de convertirse en un punto de encuentro para los amantes de la lectura en Mercedes.</p>
+      </section>
+
+      <!-- <aside> porque los "Pilares" son información complementaria
+           al relato principal pero no forman parte de su flujo narrativo. -->
+      <aside>
+        <h3>Nuestros Pilares</h3>
+
+        <!-- <dl> (lista de definición) es el elemento más apropiado para
+             pares nombre–descripción como los pilares. -->
+        <dl>
+          <dt>Pilar 1</dt>
+          <dd>Descripción del Pilar 1: comunidad y encuentro.</dd>
+
+          <dt>Pilar 2</dt>
+          <dd>Descripción del Pilar 2: diversidad y acceso a la cultura.</dd>
+        </dl>
+      </aside>
+
+    </article>
+
+    <!-- ============================================================
+         SERVICIOS COMUNITARIOS — Tres tarjetas de servicio.
+         <section> porque es una agrupación temática dentro de main;
+         las tarjetas son <article> porque cada servicio es un bloque
+         autocontenido con su propio título y descripción.
+         ============================================================ -->
+    <section>
+      <h2>Servicios Comunitarios</h2>
+
+      <!-- Se usa una lista para que la relación de igualdad entre los
+           servicios quede expresada en la estructura y no solo visualmente. -->
+      <ul>
+        <li>
+          <article>
+            <h3>Clubes de Lectura</h3>
+            <p>Reuniones mensuales de debate literario moderadas por escritores invitados.</p>
+          </article>
+        </li>
+        <li>
+          <article>
+            <h3>Talleres de Escritura</h3>
+            <p>Clases formativas y prácticas de redacción creativa para todas las edades.</p>
+          </article>
+        </li>
+        <li>
+          <article>
+            <h3>Actividades Infantiles</h3>
+            <p>Tardes de cuentacuentos y manualidades para fomentar el amor lector desde la infancia.</p>
+          </article>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ============================================================
+         UBICACIÓN — Datos de contacto + mapa embebido.
+         <section> temática; <address> para los datos de contacto
+         físico (es el elemento semántico previsto por la especificación).
+         ============================================================ -->
+    <section>
+      <!-- Etiqueta supraterraña corta, estilo "eyebrow". -->
+      <p><strong>Visitanos</strong></p>
+      <h2>¿Dónde estamos?</h2>
+      <p>Indicaciones de referencia: a media cuadra de la plaza central de Mercedes.</p>
+
+      <address>
+        <ul>
+          <li>Instituto Uzue, Mercedes, Buenos Aires, Argentina</li>
+          <li>Teléfono: <a href="tel:+54190168">+54 190168</a></li>
+          <li>Horario de atención: lunes a sábados de 9 a 20 h.</li>
+        </ul>
+      </address>
+
+      <!-- <figure> con un <iframe> porque el mapa es contenido referenciado
+           externamente; el title en el iframe lo hace accesible a lectores
+           de pantalla; sin JS/CSS el mapa queda como bloque funcional. -->
+      <figure>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3282.5!2d-59.4306!3d-34.6503!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sMercedes%2C+Buenos+Aires!5e0!3m2!1ses!2sar!4v1"
+          width="600"
+          height="400"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Ubicación de PAWPrints en Google Maps">
+        </iframe>
+        <figcaption>Ubicación en Google Maps — Mercedes, Buenos Aires, Argentina</figcaption>
+      </figure>
+    </section>
+
   </main>
 
   <hr>
