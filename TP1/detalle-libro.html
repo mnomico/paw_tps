@@ -41,7 +41,7 @@
       </form>
     </search>
 
-    <p><a href="carrito.html">Carrito (2)</a></p>
+    <p><a href="#carrito">Carrito</a></p>
 
   </header>
 
@@ -81,7 +81,7 @@
         </p>
 
         <p>
-          <a href="carrito.html">Comprar en línea</a>
+          <a href="#carrito">Agregar al carrito</a>
           <a href="reserva.html?id=1">Reservar en tienda</a>
         </p>
       </section>
@@ -168,6 +168,24 @@
     </section>
 
   </main>
+
+  <hr>
+
+  <!-- ============================================================
+       CARRITO — Compartido por las 5 páginas.
+       Va como <aside> hijo directo de <body> y no dentro de <main>
+       porque no es contenido propio de esta página: se repite igual
+       en todas. El enlace del header apunta acá con un fragmento
+       (#carrito), que resuelve siempre sin servidor ni JavaScript,
+       en vez de apuntar a una página que no existe.
+       ============================================================ -->
+  <aside id="carrito">
+    <h2>Carrito de compras</h2>
+    <!-- El TP1 no permite estado de cliente ni de servidor, así que el
+         carrito no puede acumular libros todavía: queda vacío a propósito
+         y se vuelve funcional recién cuando haya backend, en el TP3. -->
+    <p>El carrito está vacío.</p>
+  </aside>
 
   <hr>
 

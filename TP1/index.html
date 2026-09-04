@@ -41,16 +41,202 @@
       </form>
     </search>
 
-    <p><a href="carrito.html">Carrito (2)</a></p>
+    <p><a href="#carrito">Carrito</a></p>
 
   </header>
 
   <hr>
 
   <main>
-    <h1>PAWPrints</h1>
-    <p>Contenido de la página de inicio pendiente.</p>
+
+    <!-- ============================================================
+         HERO — Presentación de la librería.
+         El enunciado pide mostrar "tanto la tienda en línea como la
+         tienda física": por eso los dos enlaces de acción no son
+         decorativos, cada uno representa uno de los dos canales.
+         Van como <a> y no como <button> porque navegan, no ejecutan.
+         ============================================================ -->
+    <section>
+      <p><small>Un lugar para perderse entre páginas</small></p>
+      <h1>PAWPrints</h1>
+      <p>
+        Ubicados en la ciudad de Mercedes, somos mucho más que una librería
+        independiente. Ofrecemos una cuidada curaduría literaria, envíos a
+        toda Argentina y un espacio cálido de encuentro para amantes de la
+        lectura.
+      </p>
+
+      <ul>
+        <li><a href="catalogo.html">Explorar catálogo</a> <small>(tienda en línea)</small></li>
+        <li><a href="sobre-nosotros.html">Conocer nuestra tienda</a> <small>(tienda física)</small></li>
+      </ul>
+
+      <figure>
+        <img src="../img/local.jpg" alt="Interior de la librería PAWPrints: estanterías de madera y sillones de lectura">
+        <figcaption>Nuestro local en Mercedes, Buenos Aires.</figcaption>
+      </figure>
+    </section>
+
+    <hr>
+
+    <!-- ============================================================
+         RECOMENDACIONES — Selección curada del librero.
+         En el wireframe es un carrusel con flechas, pero el TP1 no
+         permite JavaScript: se maqueta como lista y el comportamiento
+         de carrusel se agrega recién en el TP4, que lo pide explícito.
+         Los libros son los mismos del catálogo para que el sitio sea
+         coherente entre páginas.
+         ============================================================ -->
+    <section>
+      <p><small>Nuestra selección</small></p>
+      <h2>Recomendaciones del Librero</h2>
+
+      <!-- Lista, y no <div> sueltos, para que la relación de igualdad
+           entre las recomendaciones quede en la estructura. -->
+      <ul>
+        <li>
+          <article>
+            <figure>
+              <img src="../img/libro-1.jpg" alt="Portada de El Laberinto de los Vientos">
+            </figure>
+            <p><small>Ficción</small></p>
+            <h3><a href="detalle-libro.html?id=1">El Laberinto de los Vientos</a></h3>
+            <p><strong>Autor:</strong> Salvador Báez</p>
+            <!-- <data> expone el precio en un formato legible por máquina,
+                 sin perder el formato con separador de miles para la persona. -->
+            <p><strong>Precio:</strong> <data value="16500">$16.500</data></p>
+            <p><a href="detalle-libro.html?id=1">Ver detalles &rarr;</a></p>
+          </article>
+        </li>
+
+        <li>
+          <article>
+            <figure>
+              <img src="../img/libro-2.jpg" alt="Portada de El Secreto de la Torre">
+            </figure>
+            <p><small>Ficción</small></p>
+            <h3><a href="detalle-libro.html?id=2">El Secreto de la Torre</a></h3>
+            <p><strong>Autor:</strong> Tomás Resnik</p>
+            <p><strong>Precio:</strong> <data value="14000">$14.000</data></p>
+            <p><a href="detalle-libro.html?id=2">Ver detalles &rarr;</a></p>
+          </article>
+        </li>
+
+        <li>
+          <article>
+            <figure>
+              <img src="../img/libro-3.jpg" alt="Portada de Sombras en el Horizonte">
+            </figure>
+            <p><small>Ficción</small></p>
+            <h3><a href="detalle-libro.html?id=3">Sombras en el Horizonte</a></h3>
+            <p><strong>Autor:</strong> Mateo Nómico</p>
+            <p><strong>Precio:</strong> <data value="15800">$15.800</data></p>
+            <p><a href="detalle-libro.html?id=3">Ver detalles &rarr;</a></p>
+          </article>
+        </li>
+
+        <li>
+          <article>
+            <figure>
+              <img src="../img/libro-4.jpg" alt="Portada de Ecos del Cosmos">
+            </figure>
+            <p><small>Ciencia</small></p>
+            <h3><a href="detalle-libro.html?id=4">Ecos del Cosmos</a></h3>
+            <p><strong>Autor:</strong> Salvador Báez</p>
+            <p><strong>Precio:</strong> <data value="17200">$17.200</data></p>
+            <p><a href="detalle-libro.html?id=4">Ver detalles &rarr;</a></p>
+          </article>
+        </li>
+      </ul>
+    </section>
+
+    <hr>
+
+    <!-- ============================================================
+         PROMOCIONES Y EVENTOS — Punto "Promociones y marketing local".
+         El enunciado pide que esté "claramente destacada" SIN CSS, así
+         que el destaque es semántico: la promoción va en <strong> (no
+         en <b>) porque su importancia es real y no solo tipográfica,
+         y las fechas en <time datetime> para que sean interpretables.
+         ============================================================ -->
+    <section>
+      <h2>Próximos Eventos y Promociones</h2>
+
+      <article>
+        <p><strong>Promoción vigente</strong></p>
+        <h3>2x1 en narrativa argentina</h3>
+        <p>
+          Durante todo el mes, llevás dos títulos de narrativa argentina
+          al precio de uno. Válido en la tienda física y en la tienda en línea.
+        </p>
+        <p><a href="catalogo.html?categoria=ficcion">Ver sección &rarr;</a></p>
+      </article>
+
+      <ul>
+        <li>
+          <article>
+            <p><time datetime="2026-09-18T19:00">Jueves 18 de septiembre, 19:00 h</time></p>
+            <h3>Club de lectura: literatura latinoamericana</h3>
+            <p>Encuentro mensual abierto a la comunidad, moderado por un escritor invitado.</p>
+            <p><a href="sobre-nosotros.html">Saber más &rarr;</a></p>
+          </article>
+        </li>
+
+        <li>
+          <article>
+            <p><time datetime="2026-09-27T17:30">Sábado 27 de septiembre, 17:30 h</time></p>
+            <h3>Taller de escritura creativa</h3>
+            <p>Clase abierta de redacción creativa para todas las edades. Cupos limitados.</p>
+            <p><a href="sobre-nosotros.html">Saber más &rarr;</a></p>
+          </article>
+        </li>
+      </ul>
+    </section>
+
+    <hr>
+
+    <!-- ============================================================
+         NUESTRA HISTORIA — Adelanto de "Sobre Nosotros".
+         Es un resumen que enlaza a la página completa, por eso va
+         como <section> y no como <article>: no se sostiene solo.
+         ============================================================ -->
+    <section>
+      <p><small>Nuestra historia</small></p>
+      <h2>La pasión de compartir buenas lecturas</h2>
+
+      <figure>
+        <img src="../img/clientes.jpg" alt="Clientes de PAWPrints eligiendo libros en el salón principal">
+        <figcaption>Lectores en una de nuestras jornadas de puertas abiertas.</figcaption>
+      </figure>
+
+      <p>
+        PAWPrints nació en <time datetime="2011">2011</time> como un proyecto
+        familiar, con la idea de que una librería puede ser también un punto
+        de encuentro. Desde entonces sostenemos clubes de lectura, talleres
+        de escritura y actividades infantiles para la comunidad de Mercedes.
+      </p>
+      <p><a href="sobre-nosotros.html">Conocer más sobre nosotros &rarr;</a></p>
+    </section>
+
   </main>
+
+  <hr>
+
+  <!-- ============================================================
+       CARRITO — Compartido por las 5 páginas.
+       Va como <aside> hijo directo de <body> y no dentro de <main>
+       porque no es contenido propio de esta página: se repite igual
+       en todas. El enlace del header apunta acá con un fragmento
+       (#carrito), que resuelve siempre sin servidor ni JavaScript,
+       en vez de apuntar a una página que no existe.
+       ============================================================ -->
+  <aside id="carrito">
+    <h2>Carrito de compras</h2>
+    <!-- El TP1 no permite estado de cliente ni de servidor, así que el
+         carrito no puede acumular libros todavía: queda vacío a propósito
+         y se vuelve funcional recién cuando haya backend, en el TP3. -->
+    <p>El carrito está vacío.</p>
+  </aside>
 
   <hr>
 
