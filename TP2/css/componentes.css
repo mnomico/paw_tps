@@ -1,0 +1,409 @@
+/* ================================================================
+   PAWPrints — Librería
+   componentes.css: Header, Nav, Footer, Aside Carrito, Botones y Tarjetas
+   ================================================================ */
+
+/* ================================================================
+   1. ENCABEZADO (Header) & NAVEGACIÓN (Nav)
+   ================================================================ */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  padding: var(--sp-3) var(--gutter);
+  min-height: 60px;
+}
+
+/* Marca / Logo */
+header > p:first-child {
+  flex-shrink: 0;
+}
+
+header > p:first-child a {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--v700);
+  letter-spacing: -0.01em;
+  transition: color var(--ease);
+}
+
+header > p:first-child a:hover {
+  color: var(--v900);
+}
+
+/* Navegación principal */
+header nav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+header nav ul {
+  display: flex;
+  gap: var(--sp-8);
+}
+
+header nav a {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--dark);
+  padding-bottom: 3px;
+  border-bottom: 2px solid transparent;
+  transition: color var(--ease), border-color var(--ease);
+}
+
+header nav a:hover {
+  color: var(--v700);
+}
+
+/* Ítem de página activa */
+header nav a[aria-current="page"] {
+  color: var(--v700);
+  font-weight: 600;
+  border-bottom-color: var(--v700);
+  position: relative;
+}
+
+header nav a[aria-current="page"]::after {
+  content: '•';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8px;
+  color: var(--v700);
+  line-height: 1;
+}
+
+/* Módulo de Búsqueda */
+header search {
+  display: flex;
+}
+
+header search form {
+  display: flex;
+  align-items: center;
+  background: var(--v50);
+  border: 1px solid var(--border-v);
+  border-radius: 999px;
+  padding: var(--sp-1) var(--sp-4);
+  gap: var(--sp-2);
+  transition: border-color var(--ease), box-shadow var(--ease);
+}
+
+header search form:focus-within {
+  border-color: var(--v700);
+  box-shadow: 0 0 0 3px rgba(92, 6, 140, 0.12);
+}
+
+header search label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+header search input[type="search"] {
+  border: none;
+  background: transparent;
+  font-size: var(--text-sm);
+  color: var(--dark);
+  outline: none;
+  width: 160px;
+}
+
+header search input::placeholder {
+  color: var(--muted);
+}
+
+header search button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--v700);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--r-sm);
+  transition: background var(--ease), color var(--ease);
+}
+
+header search button:hover {
+  background: var(--v100);
+  color: var(--v900);
+}
+
+/* Enlace Carrito del Header */
+header > p:last-child {
+  flex-shrink: 0;
+}
+
+header > p:last-child a {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--v700);
+  padding: var(--sp-2) var(--sp-4);
+  background: var(--v50);
+  border: 1px solid var(--border-v);
+  border-radius: var(--r-md);
+  transition: background var(--ease), color var(--ease), border-color var(--ease);
+}
+
+header > p:last-child a:hover {
+  background: var(--v700);
+  color: var(--white);
+  border-color: var(--v700);
+}
+
+/* ================================================================
+   2. CARRITO (#carrito) — Aside global compartido
+   ================================================================ */
+#carrito {
+  background: var(--v50);
+  padding: var(--sp-8) var(--gutter);
+  border-top: 1px solid var(--border-v);
+}
+
+#carrito h2 {
+  font-size: var(--text-xl);
+  color: var(--v800);
+  margin-bottom: var(--sp-3);
+}
+
+#carrito p {
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+/* ================================================================
+   3. PIE DE PÁGINA (Footer)
+   ================================================================ */
+footer {
+  background: var(--footer-bg);
+  color: var(--white);
+  padding: var(--sp-16) var(--gutter) var(--sp-8);
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.6fr 1fr;
+  gap: var(--sp-8);
+}
+
+footer hr {
+  display: block;
+  grid-column: 1 / -1;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin: var(--sp-8) 0 0;
+}
+
+footer > p:nth-last-child(2) {
+  grid-column: 1 / -1;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: var(--text-xs);
+  padding-top: var(--sp-4);
+}
+
+footer > p:last-child {
+  grid-column: 1 / -1;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: var(--text-xs);
+  margin-top: calc(-1 * var(--sp-4));
+}
+
+footer section h2,
+footer nav h2 {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin-bottom: var(--sp-4);
+  color: var(--white);
+}
+
+footer p,
+footer address {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 28ch;
+  line-height: 1.6;
+}
+
+footer ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+footer a {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.65);
+  transition: color var(--ease);
+}
+
+footer a:hover {
+  color: var(--white);
+}
+
+footer nav a:hover {
+  color: #C59EEA; /* Acento lavanda claro */
+}
+
+/* ================================================================
+   4. BOTONES (Clases y componentes reutilizables)
+   ================================================================ */
+.btn,
+button:not(header search button),
+input[type="submit"],
+input[type="button"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.4rem;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: var(--r-md);
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--ease), border-color var(--ease), box-shadow var(--ease), transform var(--ease);
+}
+
+.btn:focus-visible,
+button:focus-visible,
+input[type="submit"]:focus-visible,
+input[type="button"]:focus-visible {
+  outline: 3px solid var(--v500);
+  outline-offset: 2px;
+}
+
+/* Botón primario — Violeta corporativo */
+.btn-primary {
+  background: var(--v700);
+  color: var(--white);
+  border-color: var(--v700);
+}
+
+.btn-primary:hover {
+  background: var(--v600);
+  border-color: var(--v600);
+  box-shadow: var(--sh-md);
+}
+
+/* Botón secundario / outline */
+.btn-secondary,
+.btn-outline {
+  background: transparent;
+  color: var(--v700);
+  border-color: var(--v700);
+}
+
+.btn-secondary:hover,
+.btn-outline:hover {
+  background: var(--v50);
+  box-shadow: var(--sh-sm);
+}
+
+/* ================================================================
+   5. TARJETAS (Patrones modulares reutilizables)
+   ================================================================ */
+.card {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  padding: var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  transition: box-shadow var(--ease), transform var(--ease), border-color var(--ease);
+}
+
+.card:hover {
+  box-shadow: var(--sh-md);
+  transform: translateY(-3px);
+  border-color: var(--border-v);
+}
+
+/* ================================================================
+   6. RESPONSIVE DE COMPONENTES GLOBALES
+   ================================================================ */
+@media (max-width: 1024px) {
+  header search {
+    display: none;
+  }
+
+  footer {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+  }
+
+  header > p:first-child {
+    flex: 1;
+  }
+
+  header > p:last-child {
+    flex-shrink: 0;
+  }
+
+  header nav {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: var(--sp-1);
+  }
+
+  header nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  header nav ul {
+    gap: var(--sp-5);
+    white-space: nowrap;
+  }
+
+  header search {
+    display: flex;
+    order: 4;
+    width: 100%;
+  }
+
+  header search form {
+    width: 100%;
+  }
+
+  header search input[type="search"] {
+    width: 100%;
+  }
+
+  footer {
+    grid-template-columns: 1fr;
+    gap: var(--sp-6);
+    padding: var(--sp-10) var(--gutter) var(--sp-6);
+  }
+
+  footer > p:last-child {
+    text-align: left;
+  }
+
+  footer p {
+    max-width: 100%;
+  }
+}

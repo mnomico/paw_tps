@@ -1,0 +1,257 @@
+/* ================================================================
+   PAWPrints — Librería
+   print.css: Reglas de impresión optimizadas (@media print)
+   ================================================================ */
+
+@media print {
+  /* ----------------------------------------------------------------
+     1. RESET DE PALETA & VARIABLES PARA IMPRESIÓN
+     Ahorro de tinta y máximo contraste en papel/PDF
+     ---------------------------------------------------------------- */
+  :root {
+    --v700: #000000;
+    --v600: #000000;
+    --v500: #333333;
+    --v100: #EEEEEE;
+    --v50:  #F5F5F5;
+    --cream: #FFFFFF;
+    --footer-bg: #FFFFFF;
+    --dark: #000000;
+    --muted: #444444;
+  }
+
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* ----------------------------------------------------------------
+     2. ELEMENTOS NO IMPRIMIBLES (Ocultar)
+     ---------------------------------------------------------------- */
+  header search,
+  header > p:last-child,
+  #carrito,
+  footer > section:last-of-type,
+  hr {
+    display: none !important;
+  }
+
+  /* ----------------------------------------------------------------
+     3. CONFIGURACIÓN DE PÁGINA Y SALTOS
+     ---------------------------------------------------------------- */
+  @page {
+    margin: 2cm 1.5cm;
+    size: A4 portrait;
+  }
+
+  @page :first {
+    margin-top: 1cm;
+  }
+
+  article,
+  section,
+  figure,
+  h1,
+  h2,
+  h3 {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* ----------------------------------------------------------------
+     4. HEADER Y FOOTER EN IMPRESIÓN
+     ---------------------------------------------------------------- */
+  header {
+    position: static;
+    border-bottom: 1px solid #CCCCCC;
+    padding: 0.3cm 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  header nav ul {
+    display: flex;
+    gap: 1rem;
+  }
+
+  header nav a[aria-current="page"]::after {
+    display: none;
+  }
+
+  footer {
+    display: block;
+    background: none !important;
+    color: #000000 !important;
+    padding: 0.4cm 0;
+    border-top: 1px solid #CCCCCC;
+    margin-top: 1cm;
+  }
+
+  footer h2,
+  footer p,
+  footer a,
+  footer address {
+    color: #000000 !important;
+  }
+
+  footer nav ul {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    margin-block: 0.2cm;
+  }
+
+  /* Imprimir URL al lado de enlaces relevantes */
+  footer a[href^="http"]::after,
+  footer address a::after,
+  .page-inicio main > section:nth-of-type(1) > ul li a::after {
+    content: " (" attr(href) ")";
+    font-size: 8pt;
+    color: #555555 !important;
+  }
+
+  /* ----------------------------------------------------------------
+     5. PÁGINA INICIO (index.html)
+     ---------------------------------------------------------------- */
+  .page-inicio main > section:nth-of-type(1) {
+    display: block;
+    padding: 0.4cm 0;
+  }
+
+  .page-inicio main > section:nth-of-type(1) > figure {
+    display: none;
+  }
+
+  .page-inicio main > section:nth-of-type(1) > ul li a {
+    border: 1px solid #000000;
+    padding: 0.2cm 0.4cm;
+    display: inline-block;
+  }
+
+  .page-inicio main > section:nth-of-type(2) {
+    background: none !important;
+    padding: 0.4cm 0;
+  }
+
+  .page-inicio main > section:nth-of-type(2) > ul {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5cm;
+  }
+
+  .page-inicio main > section:nth-of-type(2) article {
+    border: 1px solid #CCCCCC;
+    page-break-inside: avoid;
+  }
+
+  .page-inicio main > section:nth-of-type(2) article figure {
+    display: none;
+  }
+
+  .page-inicio main > section:nth-of-type(3) {
+    display: block;
+    padding: 0.4cm 0;
+  }
+
+  .page-inicio main > section:nth-of-type(3) > article {
+    border: 1px solid #CCCCCC;
+    margin-bottom: 0.4cm;
+  }
+
+  .page-inicio main > section:nth-of-type(3) > ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4cm;
+  }
+
+  .page-inicio main > section:nth-of-type(3) > ul article {
+    border: 1px solid #CCCCCC;
+  }
+
+  .page-inicio main > section:nth-of-type(4) {
+    display: block;
+    padding: 0.4cm 0;
+  }
+
+  .page-inicio main > section:nth-of-type(4) > figure {
+    display: none;
+  }
+
+  /* ----------------------------------------------------------------
+     6. PÁGINA SOBRE NOSOTROS (sobre-nosotros.html)
+     ---------------------------------------------------------------- */
+  .page-sobre-nosotros main > figure:first-child {
+    position: static;
+    min-height: auto;
+    max-height: none;
+    background: none !important;
+    margin: 0;
+    width: 100%;
+  }
+
+  .page-sobre-nosotros main > figure:first-child img {
+    display: none;
+  }
+
+  .page-sobre-nosotros main > figure:first-child figcaption {
+    position: static;
+    padding: 0.4cm 0;
+  }
+
+  .page-sobre-nosotros main > figure:first-child h1 {
+    color: #000000 !important;
+    font-size: 22pt;
+    text-shadow: none;
+  }
+
+  .page-sobre-nosotros main > figure:first-child p {
+    color: #333333 !important;
+    text-shadow: none;
+  }
+
+  .page-sobre-nosotros main > article {
+    display: block;
+    padding: 0.4cm 0;
+  }
+
+  .page-sobre-nosotros main > article > aside {
+    background: #F5F5F5 !important;
+    border: 1px solid #CCCCCC;
+    padding: 0.3cm;
+    margin-top: 0.4cm;
+  }
+
+  .page-sobre-nosotros main > section:nth-of-type(1) {
+    background: none !important;
+    padding: 0.4cm 0;
+  }
+
+  .page-sobre-nosotros main > section:nth-of-type(1) > ul {
+    grid-template-columns: 1fr;
+    gap: 0.3cm;
+  }
+
+  .page-sobre-nosotros main > section:nth-of-type(1) article {
+    border: 1px solid #CCCCCC;
+  }
+
+  .page-sobre-nosotros main > section:nth-of-type(2) {
+    display: block;
+    padding: 0.4cm 0;
+  }
+
+  .page-sobre-nosotros main > section:nth-of-type(2) > figure {
+    display: none; /* Mapas dinámicos iframe no son aptos para impresión */
+  }
+}
