@@ -254,4 +254,114 @@
   .page-sobre-nosotros main > section:nth-of-type(2) > figure {
     display: none; /* Mapas dinámicos iframe no son aptos para impresión */
   }
+
+  /* ----------------------------------------------------------------
+     7. PÁGINA RESERVA (reserva.html)
+     Se imprime como comprobante: una sola columna, sin el botón de
+     envío y con las leyendas de cada grupo a la vista (en pantalla van
+     ocultas, acá orientan a quien complete el formulario en papel).
+     ---------------------------------------------------------------- */
+  .page-reserva main {
+    display: block;
+    max-width: none;
+    padding: 0;
+  }
+
+  /* En pantalla es `display: contents`; en papel vuelve al flujo normal */
+  .page-reserva main > section:nth-of-type(2) {
+    display: block;
+  }
+
+  .page-reserva main > section:nth-of-type(1),
+  .page-reserva main > section:nth-of-type(2) > article {
+    border: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .page-reserva main > section:nth-of-type(1) {
+    margin-bottom: 0.4cm;
+  }
+
+  .page-reserva main > section:nth-of-type(1) h1 {
+    font-size: 18pt;
+  }
+
+  /* Las reglas generales evitan cortar <article> y <section>, pero el
+     formulario no entra en una carilla: si no se lo deja fluir, empuja
+     todo a la hoja siguiente y la primera queda casi vacía. */
+  .page-reserva main > section:nth-of-type(2),
+  .page-reserva main > section:nth-of-type(2) > article,
+  .page-reserva main form,
+  .page-reserva main form fieldset {
+    page-break-inside: auto;
+    break-inside: auto;
+  }
+
+  /* Cada campo, en cambio, no se parte entre dos hojas */
+  .page-reserva main form fieldset > div {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .page-reserva main form {
+    gap: 0.4cm;
+  }
+
+  .page-reserva main form legend {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    font-size: 11pt;
+    font-weight: 700;
+    margin-bottom: 0.2cm;
+  }
+
+  .page-reserva main form input,
+  .page-reserva main form select,
+  .page-reserva main form textarea {
+    border: 1px solid #999999 !important;
+    border-radius: 0;
+    padding: 0.15cm 0.2cm;
+    font-size: 10pt;
+  }
+
+  /* Enviar una reserva desde el papel no es posible */
+  .page-reserva main form > div:last-child {
+    display: none;
+  }
+
+  /* El resumen del libro queda debajo del formulario, sin cortarse */
+  .page-reserva main > section:nth-of-type(2) > aside {
+    position: static;
+    border: 1px solid #CCCCCC;
+    border-radius: 0;
+    padding: 0.4cm;
+    margin-top: 0.6cm;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Las reglas generales de este archivo apuntan al header del sitio por
+     tipo de elemento, y alcanzan también al de la tarjeta del libro. */
+  .page-reserva main aside header {
+    display: block;
+    border-bottom: none;
+    padding: 0;
+  }
+
+  /* `header > p:last-child` oculta el carrito, pero acá es el precio */
+  .page-reserva main aside header > p:last-child {
+    display: block !important;
+  }
+
+  /* El separador de la tarjeta sí se imprime */
+  .page-reserva main aside hr {
+    display: block !important;
+    border: none;
+    border-top: 1px solid #CCCCCC;
+    margin: 0.3cm 0;
+  }
 }

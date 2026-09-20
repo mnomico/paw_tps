@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reservar un libro — PAWPrints</title>
+  <meta name="description" content="Formulario para reservar un libro del catálogo de PAWPrints y retirarlo en la tienda.">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/componentes.css">
+  <link rel="stylesheet" href="css/reserva.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
+</head>
+<body class="page-reserva">
+
+  <!-- ============================================================
+       HEADER — compartido por las 5 pantallas del wireframe.
+       Al no haber servidor hasta el TP3, no hay includes: este bloque
+       se copia tal cual en cada página y solo cambia el aria-current.
+       ============================================================ -->
+  <header>
+
+    <!-- El nombre de la marca va como enlace y no como encabezado para no
+         competir con el <h1> de cada página, que describe su contenido. -->
+    <p><a href="index.html">PAWPrints — Librería</a></p>
+
+    <nav aria-label="Navegación principal">
+      <ul>
+        <!-- aria-current marca la página activa: es el equivalente semántico
+             al resaltado en terracota que el wireframe le da al ítem actual. -->
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="catalogo.html" aria-current="page">Catálogo</a></li>
+        <li><a href="sobre-nosotros.html">Sobre Nosotros</a></li>
+      </ul>
+    </nav>
+
+    <!-- La lupa del wireframe: el GET contra el catálogo es la forma de
+         expresar una búsqueda sin JavaScript ni procesamiento en servidor.
+         <search> ya aporta por sí solo el rol de búsqueda, por eso el <form>
+         no lleva role="search": ponerlo anidaría dos landmarks iguales. -->
+    <search>
+      <form action="catalogo.html" method="get">
+        <label for="busqueda">Buscar libros</label>
+        <input type="search" id="busqueda" name="q" placeholder="Título, autor o género">
+        <button type="submit">Buscar</button>
+      </form>
+    </search>
+
+    <p><a href="#carrito">Carrito</a></p>
+
+  </header>
+
+  <hr>
+
+  <main>
+
+    <!-- ============================================================
+         RESERVA DE LIBRO
+
+         Layout de dos columnas (según wireframe):
+           - Columna principal (izquierda): formulario de reserva.
+           - Columna secundaria (derecha): tarjeta de resumen del libro.
+
+         Decisiones semánticas del formulario:
+           · type="text"     → nombre completo (texto libre)
+           · type="email"    → correo electrónico (valida formato @)
+           · type="tel"      → teléfono (activa teclado numérico en móvil)
+           · <select>        → lista cerrada de libros (evita errores tipográficos)
+           · type="number"   → cantidad (solo enteros positivos; min/max acotados)
+           · <textarea>      → comentarios largos de forma libre
+           · required        → campos obligatorios marcados en el wireframe con *
+           · autocomplete    → ayuda al navegador a completar datos del usuario
+           · maxlength       → límite razonable para nombre y teléfono
+           · pattern         → refuerza el formato del teléfono en navegadores que
+                               no implementan validación nativa de tel
+
+         El <form> usa method="post" porque transmite datos personales que no
+         deben quedar expuestos en la URL ni en el historial del navegador.
+         ============================================================ -->
+
+    <!-- Encabezado de la sección -->
+    <section aria-labelledby="titulo-reserva">
+      <h1 id="titulo-reserva">Formulario de Reserva</h1>
+      <p>
+        Reservá tu ejemplar de manera gratuita y retiralo en nuestra
+        librería física en Mercedes cuando te convenga.
+      </p>
+    </section>
+
+    <!-- Cuerpo principal: formulario + resumen del libro -->
+    <section aria-label="Contenido de la página de reserva">
+
+      <!-- ── COLUMNA IZQUIERDA: Formulario de reserva ── -->
+      <article aria-labelledby="subtitulo-formulario">
+        <h2 id="subtitulo-formulario" hidden>Datos de la reserva</h2>
+
+        <form action="confirmacion-reserva.html" method="post"
+              aria-labelledby="titulo-reserva"
+              novalidate>
+          <!--
+            novalidate: en un TP de HTML puro se deja para poder ver la
+            estructura sin que el navegador bloquee el submit. En producción
+            se eliminaría para activar la validación nativa.
+          -->
+
+          <!-- ── Datos de contacto del solicitante ── -->
+          <fieldset>
+            <legend>Datos del solicitante</legend>
+
+            <!-- Nombre completo -->
+            <div>
+              <label for="nombre">Nombre completo <abbr title="campo obligatorio">*</abbr></label>
+              <input
+                type="text"
+                id="nombre"
+                name="nombre"
+                placeholder="Ej. Juan Pérez García"
+                required
+                maxlength="100"
+                autocomplete="name"
+              >
+            </div>
+
+            <!-- Correo electrónico y Teléfono en la misma fila (wireframe) -->
+            <div>
+              <!-- Correo electrónico -->
+              <div>
+                <label for="email">Correo electrónico <abbr title="campo obligatorio">*</abbr></label>
+                <!--
+                  type="email": el navegador valida que haya un "@" y un dominio
+                  antes de aceptar el envío del formulario.
+                -->
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="juan.perez@ejemplo.com"
+                  required
+                  maxlength="254"
+                  autocomplete="email"
+                >
+              </div>
+
+              <!-- Teléfono de contacto -->
+              <div>
+                <label for="telefono">Teléfono de contacto <abbr title="campo obligatorio">*</abbr></label>
+                <!--
+                  type="tel": activa el teclado numérico en dispositivos móviles.
+                  No valida el formato por sí solo; pattern complementa esa tarea.
+                  El patrón acepta: +54 9 11 1234-5678, 011 4123-4567, 2324 12345, etc.
+                -->
+                <input
+                  type="tel"
+                  id="telefono"
+                  name="telefono"
+                  placeholder="+54 9 11 1234-5678"
+                  required
+                  maxlength="20"
+                  pattern="[\+]?[\d\s\-\(\)]{7,20}"
+                  autocomplete="tel"
+                >
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- ── Datos del libro a reservar ── -->
+          <fieldset>
+            <legend>Datos del libro</legend>
+
+            <!-- Selección del libro -->
+            <div>
+              <label for="libro">Seleccioná el libro a reservar <abbr title="campo obligatorio">*</abbr></label>
+              <!--
+                <select>: lista cerrada garantiza que se envíe un valor conocido
+                por el sistema; el id del libro como value simplifica el backend.
+              -->
+              <select id="libro" name="libro_id" required>
+                <option value="" disabled selected>— Seleccioná un libro —</option>
+                <optgroup label="Ficción">
+                  <option value="1">El Laberinto de los Vientos — Salvador Baez</option>
+                  <option value="2">El Secreto de la Torre — Tomás Resnik</option>
+                  <option value="3">Sombras en el Horizonte — Mateo Nomico</option>
+                </optgroup>
+                <optgroup label="Ciencia">
+                  <option value="4">Ecos del Cosmos — Salvador Baez</option>
+                </optgroup>
+                <optgroup label="Historia">
+                  <option value="5">Crónicas del Tiempo Olvidado — Tomás Resnik</option>
+                </optgroup>
+                <optgroup label="Arte &amp; Diseño">
+                  <option value="6">La Arquitectura de la Mente — Mateo Nomico</option>
+                </optgroup>
+                <option value="otro">Guía de Como aprobar PAW y sobrevivir en el intento</option>
+              </select>
+            </div>
+
+            <!-- Cantidad -->
+            <div>
+              <label for="cantidad">Cantidad <abbr title="campo obligatorio">*</abbr></label>
+              <!--
+                type="number": renderiza controles de incremento/decremento.
+                min="1" impide cantidades cero o negativas.
+                max="5" limita a 5 ejemplares por reserva (política de la tienda).
+                value="1" establece el valor por defecto que muestra el wireframe.
+              -->
+              <input
+                type="number"
+                id="cantidad"
+                name="cantidad"
+                value="1"
+                min="1"
+                max="5"
+                required
+              >
+              <small>Máximo 5 ejemplares por reserva.</small>
+            </div>
+          </fieldset>
+
+          <!-- ── Información adicional ── -->
+          <fieldset>
+            <legend>Información adicional</legend>
+
+            <!-- Comentarios -->
+            <div>
+              <label for="comentarios">Comentarios adicionales</label>
+              <!--
+                <textarea>: campo de texto largo y de forma libre; ideal para
+                instrucciones sin estructura predefinida. No lleva required porque
+                en el wireframe no está marcado como obligatorio.
+                rows="5" orienta visualmente al usuario sobre el espacio disponible.
+              -->
+              <textarea
+                id="comentarios"
+                name="comentarios"
+                rows="5"
+                maxlength="500"
+                placeholder="¿Deseás que lo envolvamos para regalo? ¿Alguna instrucción sobre la recogida?"
+              ></textarea>
+            </div>
+          </fieldset>
+
+          <!-- Botón de envío -->
+          <div>
+            <button type="submit">Enviar Reserva</button>
+          </div>
+
+        </form>
+      </article>
+
+      <!-- ── COLUMNA DERECHA: Resumen del libro seleccionado ── -->
+      <aside aria-labelledby="titulo-resumen-libro">
+        <h2 id="titulo-resumen-libro" hidden>Resumen del libro</h2>
+
+        <!-- Tarjeta del libro (datos estáticos de ejemplo, como en el wireframe) -->
+        <article aria-labelledby="nombre-libro-resumen">
+          <header>
+            <!-- El número grande "Libro 1" del wireframe es decorativo;
+                 el título real es el dato significativo. -->
+            <p><strong>Libro 1</strong></p>
+            <h3 id="nombre-libro-resumen">El Laberinto de los Vientos</h3>
+            <p>Salvador Baez</p>
+            <p><strong><data value="16500">$16.500</data></strong></p>
+          </header>
+
+          <hr>
+
+          <!-- Beneficios de la reserva -->
+          <section aria-labelledby="titulo-beneficios">
+            <h3 id="titulo-beneficios" hidden>Beneficios de reservar en tienda</h3>
+            <ul>
+              <li>Te guardaremos el libro por 10 días laborables.</li>
+              <li>Recibirás un SMS y correo electrónico de confirmación.</li>
+              <li>Pago directo al retirarlo en tienda física.</li>
+            </ul>
+          </section>
+        </article>
+      </aside>
+
+    </section><!-- fin sección contenido -->
+
+  </main>
+
+  <hr>
+
+  <!-- ============================================================
+       CARRITO — Compartido por las 5 páginas.
+       Va como <aside> hijo directo de <body> y no dentro de <main>
+       porque no es contenido propio de esta página: se repite igual
+       en todas. El enlace del header apunta acá con un fragmento
+       (#carrito), que resuelve siempre sin servidor ni JavaScript,
+       en vez de apuntar a una página que no existe.
+       ============================================================ -->
+  <aside id="carrito">
+    <h2>Carrito de compras</h2>
+    <!-- El TP1 no permite estado de cliente ni de servidor, así que el
+         carrito no puede acumular libros todavía: queda vacío a propósito
+         y se vuelve funcional recién cuando haya backend, en el TP3. -->
+    <p>El carrito está vacío.</p>
+  </aside>
+
+  <hr>
+
+  <!-- ============================================================
+       FOOTER — también compartido por las 5 pantallas.
+       Cubre el punto "Información de contacto" del enunciado.
+       ============================================================ -->
+  <footer>
+
+    <section>
+      <h2>PAWPrints</h2>
+      <p>
+        Un santuario para las palabras impresas y las almas lectoras.
+        Visitanos en nuestra tienda física en Mercedes o explorá todo
+        nuestro catálogo en línea.
+      </p>
+    </section>
+
+    <nav aria-label="Navegación del pie de página">
+      <h2>Navegación</h2>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="catalogo.html">Catálogo completo</a></li>
+        <li><a href="sobre-nosotros.html">Sobre Nosotros</a></li>
+      </ul>
+    </nav>
+
+    <section>
+      <h2>Contacto &amp; Visita</h2>
+      <!-- <address> es el tag específico para los datos de contacto del sitio;
+           tel: y mailto: hacen que el dato sea accionable sin JavaScript. -->
+      <address>
+        Instituto Uzue, Mercedes, Buenos Aires, Argentina<br>
+        Teléfono: <a href="tel:+54190168">+54 190168</a><br>
+        Correo: <a href="mailto:contacto@pawprints.com.ar">contacto@pawprints.com.ar</a>
+      </address>
+      <p>Horario de atención: lunes a sábados de 9 a 20 h.</p>
+    </section>
+
+    <section>
+      <h2>Seguinos</h2>
+      <ul>
+        <!-- rel="external" deja explícito que salen del sitio. -->
+        <li><a href="https://www.instagram.com/" rel="external">Instagram</a></li>
+        <li><a href="https://www.facebook.com/" rel="external">Facebook</a></li>
+        <li><a href="https://x.com/" rel="external">X</a></li>
+      </ul>
+    </section>
+
+    <hr>
+
+    <p><small>&copy; 2026 Librería PAWPrints. Todos los derechos reservados.</small></p>
+    <p><small>Mercedes, Argentina</small></p>
+
+  </footer>
+
+</body>
+</html>
