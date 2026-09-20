@@ -6,7 +6,7 @@
 /* ================================================================
    1. ENCABEZADO (Header) & NAVEGACIÓN (Nav)
    ================================================================ */
-header {
+body > header {
   position: sticky;
   top: 0;
   z-index: 200;
@@ -20,11 +20,11 @@ header {
 }
 
 /* Marca / Logo */
-header > p:first-child {
+body > header > p:first-child {
   flex-shrink: 0;
 }
 
-header > p:first-child a {
+body > header > p:first-child a {
   font-family: var(--font-serif);
   font-size: var(--text-lg);
   font-weight: 700;
@@ -39,29 +39,29 @@ header > p:first-child a {
 }
 
 /* Ícono: el SVG ya viene en el violeta corporativo, no hace falta teñirlo */
-header > p:first-child img {
+body > header > p:first-child img {
   height: 32px;
   width: auto;
   flex-shrink: 0;
 }
 
-header > p:first-child a:hover {
+body > header > p:first-child a:hover {
   color: var(--v900);
 }
 
 /* Navegación principal */
-header nav {
+body > header nav {
   flex: 1;
   display: flex;
   justify-content: center;
 }
 
-header nav ul {
+body > header nav ul {
   display: flex;
   gap: var(--sp-8);
 }
 
-header nav a {
+body > header nav a {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   font-weight: 500;
@@ -71,19 +71,19 @@ header nav a {
   transition: color var(--ease), border-color var(--ease);
 }
 
-header nav a:hover {
+body > header nav a:hover {
   color: var(--v700);
 }
 
 /* Ítem de página activa */
-header nav a[aria-current="page"] {
+body > header nav a[aria-current="page"] {
   color: var(--v700);
   font-weight: 600;
   border-bottom-color: var(--v700);
   position: relative;
 }
 
-header nav a[aria-current="page"]::after {
+body > header nav a[aria-current="page"]::after {
   content: '•';
   position: absolute;
   bottom: -12px;
@@ -95,11 +95,11 @@ header nav a[aria-current="page"]::after {
 }
 
 /* Módulo de Búsqueda */
-header search {
+body > header search {
   display: flex;
 }
 
-header search form {
+body > header search form {
   display: flex;
   align-items: center;
   background: var(--v50);
@@ -110,12 +110,12 @@ header search form {
   transition: border-color var(--ease), box-shadow var(--ease);
 }
 
-header search form:focus-within {
+body > header search form:focus-within {
   border-color: var(--v700);
   box-shadow: 0 0 0 3px rgba(92, 6, 140, 0.12);
 }
 
-header search label {
+body > header search label {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -124,7 +124,7 @@ header search label {
   white-space: nowrap;
 }
 
-header search input[type="search"] {
+body > header search input[type="search"] {
   border: none;
   background: transparent;
   font-size: var(--text-sm);
@@ -133,11 +133,11 @@ header search input[type="search"] {
   width: 160px;
 }
 
-header search input::placeholder {
+body > header search input::placeholder {
   color: var(--muted);
 }
 
-header search button {
+body > header search button {
   background: none;
   border: none;
   cursor: pointer;
@@ -149,17 +149,17 @@ header search button {
   transition: background var(--ease), color var(--ease);
 }
 
-header search button:hover {
+body > header search button:hover {
   background: var(--v100);
   color: var(--v900);
 }
 
 /* Enlace Carrito del Header */
-header > p:last-child {
+body > header > p:last-child {
   flex-shrink: 0;
 }
 
-header > p:last-child a {
+body > header > p:last-child a {
   font-family: var(--font-sans);
   font-size: var(--text-sm);
   font-weight: 600;
@@ -171,7 +171,7 @@ header > p:last-child a {
   transition: background var(--ease), color var(--ease), border-color var(--ease);
 }
 
-header > p:last-child a:hover {
+body > header > p:last-child a:hover {
   background: var(--v700);
   color: var(--white);
   border-color: var(--v700);
@@ -349,7 +349,7 @@ input[type="button"]:focus-visible {
    6. RESPONSIVE DE COMPONENTES GLOBALES
    ================================================================ */
 @media (max-width: 1024px) {
-  header search {
+  body > header search {
     display: none;
   }
 
@@ -359,25 +359,25 @@ input[type="button"]:focus-visible {
 }
 
 @media (max-width: 768px) {
-  header {
+  body > header {
     flex-wrap: wrap;
     gap: var(--sp-3);
   }
 
-  header > p:first-child {
+  body > header > p:first-child {
     flex: 1;
   }
 
   /* En pantallas angostas el nombre ya ocupa dos líneas: el ícono achica */
-  header > p:first-child img {
+  body > header > p:first-child img {
     height: 26px;
   }
 
-  header > p:last-child {
+  body > header > p:last-child {
     flex-shrink: 0;
   }
 
-  header nav {
+  body > header nav {
     order: 3;
     width: 100%;
     justify-content: flex-start;
@@ -387,26 +387,26 @@ input[type="button"]:focus-visible {
     padding-bottom: var(--sp-1);
   }
 
-  header nav::-webkit-scrollbar {
+  body > header nav::-webkit-scrollbar {
     display: none;
   }
 
-  header nav ul {
+  body > header nav ul {
     gap: var(--sp-5);
     white-space: nowrap;
   }
 
-  header search {
+  body > header search {
     display: flex;
     order: 4;
     width: 100%;
   }
 
-  header search form {
+  body > header search form {
     width: 100%;
   }
 
-  header search input[type="search"] {
+  body > header search input[type="search"] {
     width: 100%;
   }
 
