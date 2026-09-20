@@ -150,9 +150,14 @@ reserva**.
   es lo accesible.
 - **Redes sociales.** Las cuentas no existen, así que se listan sin `href`, para no dejar enlaces
   rotos contra dominios reales.
-- **Imágenes.** Las de [`pawprints/img/`](pawprints/img/) son marcadores generados para el TP,
-  guardadas en el repositorio y referenciadas con rutas relativas para no depender de servicios
-  externos.
+- **Imágenes.** Viven en [`pawprints/img/`](pawprints/img/), guardadas en el repositorio y
+  referenciadas con rutas relativas para no depender de servicios externos. En el TP1 eran
+  marcadores generados; hoy son fotografías de Wikimedia Commons, con su autor y su licencia en
+  [`img/CREDITOS.md`](pawprints/img/CREDITOS.md). Las seis portadas se compusieron sobre esas
+  fotos con la tipografía del sitio. Todas son provisorias, hasta que existan fotos de la
+  librería.
+- **Foto del autor.** Salvador Baez es un personaje inventado, así que la ficha muestra su
+  escritorio y no un retrato: una cara real le atribuiría una identidad que no es la suya.
 
 ## TP2 — Estilos
 
