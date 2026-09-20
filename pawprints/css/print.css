@@ -106,6 +106,13 @@
     color: #000000 !important;
   }
 
+  /* En pantalla el footer es una grilla y estas dos líneas comparten fila,
+     así que la última se tira hacia arriba. Impreso el footer es un bloque:
+     ese tiro la superpondría sobre el copyright. */
+  footer > p:last-child {
+    margin-top: 0;
+  }
+
   footer nav ul {
     display: flex;
     flex-direction: row;
