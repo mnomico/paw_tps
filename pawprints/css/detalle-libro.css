@@ -3,22 +3,25 @@
    detalle-libro.css: Estilos específicos de la Ficha de Detalle de Libro
    ================================================================ */
 
+/* Contenedor base de la página de detalle de libro */
 .page-detalle-libro {
-  background-color: var(--white);
+  background-color: var(--white); /* Fondo blanco base para toda la página */
 }
 
+/* Estructura del área <main> */
 .page-detalle-libro main {
-  max-width: calc(var(--max-w) + 2 * var(--gutter));
-  margin-inline: auto;
-  padding: var(--sp-10) var(--gutter) var(--sp-16);
+  max-width: calc(var(--max-w) + 2 * var(--gutter)); /* Ancho máximo con márgenes laterales */
+  margin-inline: auto;                               /* Centrado horizontal automático */
+  padding: var(--sp-10) var(--gutter) var(--sp-16);  /* Relleno superior, lateral e inferior */
   display: flex;
-  flex-direction: column;
-  gap: var(--sp-12);
+  flex-direction: column;                            /* Distribución vertical de secciones */
+  gap: var(--sp-12);                                 /* Espaciado generoso entre secciones */
 }
 
 /* ================================================================
    1. SECCIÓN PRINCIPAL: FICHA TÉCNICA DEL LIBRO
    ================================================================ */
+/* Tarjeta principal con distribución en 2 columnas mediante CSS Grid Areas */
 .page-detalle-libro article[aria-labelledby="titulo-libro-principal"] {
   background: var(--white);
   border: 1px solid var(--border);
@@ -26,34 +29,36 @@
   padding: var(--sp-10);
   box-shadow: var(--sh-sm);
   display: grid;
-  grid-template-columns: minmax(280px, 340px) 1fr;
+  grid-template-columns: minmax(280px, 340px) 1fr; /* Columna izquierda para la portada, derecha para datos */
   grid-template-areas:
     "portada header"
     "portada descripcion"
-    "portada acciones";
-  column-gap: var(--sp-10);
-  row-gap: var(--sp-6);
-  align-items: start;
+    "portada acciones";                             /* Asignación temática por zonas */
+  column-gap: var(--sp-10);                           /* Distancia entre la imagen y el texto */
+  row-gap: var(--sp-6);                              /* Distancia entre filas de contenido */
+  align-items: start;                                /* Alineación al borde superior */
 }
 
 /* ── Portada del Libro (Columna Izquierda) ───────────────────── */
-.page-detalle-libro article[aria-labelledby="titulo-libro-principal"]>figure {
-  grid-area: portada;
+.page-detalle-libro article[aria-labelledby="titulo-libro-principal"] > figure {
+  grid-area: portada;      /* Asignado al área 'portada' de la grilla */
   margin: 0;
   position: relative;
 }
 
-.page-detalle-libro article[aria-labelledby="titulo-libro-principal"]>figure img {
+/* Imagen de la portada */
+.page-detalle-libro article[aria-labelledby="titulo-libro-principal"] > figure img {
   width: 100%;
   height: auto;
-  aspect-ratio: 3/4;
-  object-fit: cover;
-  border-radius: var(--r-lg);
-  box-shadow: var(--sh-lg);
-  border: 1px solid var(--border-v);
+  aspect-ratio: 3/4;                /* Proporción editorial 3:4 */
+  object-fit: cover;               /* Ajusta sin distorsión */
+  border-radius: var(--r-lg);       /* Esquinas redondeadas (12px) */
+  box-shadow: var(--sh-lg);          /* Sombra pronunciada para destacar la portada */
+  border: 1px solid var(--border-v); /* Borde sutil lavanda */
 }
 
-.page-detalle-libro article[aria-labelledby="titulo-libro-principal"]>figure figcaption {
+/* Leyenda de la portada (<figcaption>) */
+.page-detalle-libro article[aria-labelledby="titulo-libro-principal"] > figure figcaption {
   font-size: var(--text-xs);
   color: var(--muted);
   text-align: center;
@@ -62,14 +67,15 @@
 }
 
 /* ── Encabezado y Metadatos ──────────────────────────────────── */
-.page-detalle-libro article[aria-labelledby="titulo-libro-principal"]>header {
-  grid-area: header;
+.page-detalle-libro article[aria-labelledby="titulo-libro-principal"] > header {
+  grid-area: header;       /* Asignado al área 'header' de la grilla */
   display: flex;
-  flex-direction: column;
+  flex-direction: column;  /* Apila los metadatos, el título y el autor */
   gap: var(--sp-2);
 }
 
-.page-detalle-libro article[aria-labelledby="titulo-libro-principal"]>header p:first-child small {
+/* Badge de género e ISBN */
+.page-detalle-libro article[aria-labelledby="titulo-libro-principal"] > header p:first-child small {
   font-size: var(--text-xs);
   font-weight: 700;
   color: var(--v700);
@@ -81,6 +87,7 @@
   display: inline-block;
 }
 
+/* Título principal del libro (H1) */
 .page-detalle-libro #titulo-libro-principal {
   font-family: var(--font-serif);
   font-size: clamp(var(--text-3xl), 3.5vw, var(--text-4xl));
@@ -91,24 +98,26 @@
   margin-top: var(--sp-1);
 }
 
-.page-detalle-libro article[aria-labelledby="titulo-libro-principal"]>header p:last-child {
+/* Nombre del autor */
+.page-detalle-libro article[aria-labelledby="titulo-libro-principal"] > header p:last-child {
   font-size: var(--text-lg);
   color: var(--muted);
 }
 
-.page-detalle-libro article[aria-labelledby="titulo-libro-principal"]>header p:last-child strong {
+.page-detalle-libro article[aria-labelledby="titulo-libro-principal"] > header p:last-child strong {
   color: var(--v800);
   font-weight: 600;
 }
 
-/* ── Descripción ────────────────────────────────────────────── */
+/* ── Descripción del contenido ────────────────────────────────── */
 .page-detalle-libro section[aria-labelledby="titulo-descripcion"] {
-  grid-area: descripcion;
+  grid-area: descripcion;  /* Asignado al área 'descripcion' de la grilla */
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
 }
 
+/* Subtítulo de descripción (H2) */
 .page-detalle-libro #titulo-descripcion {
   font-family: var(--font-serif);
   font-size: var(--text-xl);
@@ -118,16 +127,17 @@
   padding-bottom: var(--sp-2);
 }
 
+/* Texto de la descripción */
 .page-detalle-libro section[aria-labelledby="titulo-descripcion"] p {
   font-size: var(--text-base);
   color: var(--dark);
   line-height: 1.75;
 }
 
-/* ── Caja de Precio y Botones de Acción ──────────────────────── */
+/* ── Caja de Precio, Disponibilidad y Botones de Acción ───────── */
 .page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"] {
-  grid-area: acciones;
-  background: linear-gradient(135deg, var(--v50) 0%, var(--cream) 100%);
+  grid-area: acciones;     /* Asignado al área 'acciones' de la grilla */
+  background: linear-gradient(135deg, var(--v50) 0%, var(--cream) 100%); /* Gradiente cálido lavanda */
   border: 1px solid var(--border-v);
   border-radius: var(--r-xl);
   padding: var(--sp-6) var(--sp-8);
@@ -138,7 +148,8 @@
   margin-top: var(--sp-2);
 }
 
-.page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"]>p:first-of-type {
+/* Fila superior de precio y estado de stock */
+.page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"] > p:first-of-type {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -153,6 +164,7 @@
   letter-spacing: 0.05em;
 }
 
+/* Valor numérico del precio (<data>) */
 .page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"] data {
   font-family: var(--font-sans);
   font-size: var(--text-3xl);
@@ -160,6 +172,7 @@
   color: var(--v800);
 }
 
+/* Badge de estado "EN STOCK" (<mark>) */
 .page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"] mark {
   background: #E6F4EA;
   color: #137333;
@@ -172,13 +185,14 @@
   border: 1px solid #CEEAD6;
 }
 
-/* Enlaces / Botones de Agregar al carrito y Reservar */
-.page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"]>p:last-child {
+/* Contenedor de botones de acción */
+.page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"] > p:last-child {
   display: flex;
   gap: var(--sp-4);
   flex-wrap: wrap;
 }
 
+/* Botón principal: "Agregar al carrito" */
 .page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"] a[href="#carrito"] {
   flex: 1;
   min-width: 180px;
@@ -201,6 +215,7 @@
   box-shadow: var(--sh-md);
 }
 
+/* Botón secundario: "Reservar en tienda" */
 .page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"] a[href^="reserva.html"] {
   flex: 1;
   min-width: 180px;
@@ -231,6 +246,7 @@
   gap: var(--sp-6);
 }
 
+/* Título de la sección del autor (H2) */
 .page-detalle-libro #titulo-sobre-autor {
   font-family: var(--font-serif);
   font-size: var(--text-2xl);
@@ -240,17 +256,19 @@
   padding-bottom: var(--sp-3);
 }
 
+/* Tarjeta del autor */
 .page-detalle-libro section[aria-labelledby="titulo-sobre-autor"] article {
   background: var(--v50);
   border: 1px solid var(--border-v);
   border-radius: var(--r-xl);
   padding: var(--sp-8);
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 220px 1fr; /* Foto a la izquierda, texto biográfico a la derecha */
   gap: var(--sp-8);
   align-items: center;
 }
 
+/* Foto del escritorio del autor (<figure>) */
 .page-detalle-libro section[aria-labelledby="titulo-sobre-autor"] figure {
   margin: 0;
   border-radius: var(--r-lg);
@@ -274,6 +292,7 @@
   clip: rect(0 0 0 0);
 }
 
+/* Nombre del autor (H3) */
 .page-detalle-libro section[aria-labelledby="titulo-sobre-autor"] article header h3 {
   font-family: var(--font-serif);
   font-size: var(--text-xl);
@@ -282,6 +301,7 @@
   margin-bottom: var(--sp-2);
 }
 
+/* Texto biográfico */
 .page-detalle-libro section[aria-labelledby="titulo-sobre-autor"] article p {
   font-size: var(--text-base);
   color: var(--dark);
@@ -297,6 +317,7 @@
   gap: var(--sp-6);
 }
 
+/* Título de recomendaciones (H2) */
 .page-detalle-libro #titulo-recomendaciones {
   font-family: var(--font-serif);
   font-size: var(--text-2xl);
@@ -306,7 +327,8 @@
   padding-bottom: var(--sp-3);
 }
 
-.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"]>ul {
+/* Grilla de libros recomendados */
+.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] > ul {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: var(--sp-6);
@@ -315,10 +337,11 @@
   margin: 0;
 }
 
-.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"]>ul>li {
+.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] > ul > li {
   display: flex;
 }
 
+/* Tarjeta individual de recomendación */
 .page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] article {
   background: var(--white);
   border: 1px solid var(--border);
@@ -336,6 +359,7 @@
   border-color: var(--border-v);
 }
 
+/* Portada de libro recomendado */
 .page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] figure {
   margin: 0;
   position: relative;
@@ -364,6 +388,7 @@
   clip: rect(0 0 0 0);
 }
 
+/* Encabezado interno de tarjeta recomendada */
 .page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] header {
   margin-top: var(--sp-4);
   display: flex;
@@ -403,7 +428,8 @@
   margin-top: var(--sp-1);
 }
 
-.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] article>p:nth-of-type(1) {
+/* Precio del libro recomendado */
+.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] article > p:nth-of-type(1) {
   font-size: var(--text-base);
   font-weight: 700;
   color: var(--v800);
@@ -413,16 +439,17 @@
   flex-grow: 1;
 }
 
-.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] article>p:nth-of-type(1) data {
+.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] article > p:nth-of-type(1) data {
   font-size: var(--text-lg);
   color: var(--v700);
 }
 
-.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] article>p:last-child {
+/* Enlace "Ver detalles" */
+.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] article > p:last-child {
   margin-top: var(--sp-3);
 }
 
-.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] article>p:last-child a {
+.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] article > p:last-child a {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-1);
@@ -432,14 +459,15 @@
   transition: transform var(--ease), color var(--ease);
 }
 
-.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] article>p:last-child a:hover {
+.page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] article > p:last-child a:hover {
   color: var(--v900);
   transform: translateX(4px);
 }
 
 /* ================================================================
-   4. RESPONSIVO DE DETALLE DE LIBRO
+   4. RESPONSIVO DE DETALLE DE LIBRO (MEDIA QUERIES)
    ================================================================ */
+/* Tablets y pantallas medianas (hasta 900px) */
 @media (max-width: 900px) {
   .page-detalle-libro article[aria-labelledby="titulo-libro-principal"] {
     grid-template-columns: 1fr;
@@ -447,13 +475,13 @@
       "header"
       "portada"
       "descripcion"
-      "acciones";
+      "acciones"; /* Reorganiza verticalmente la ficha del libro */
     padding: var(--sp-6);
   }
 
-  .page-detalle-libro article[aria-labelledby="titulo-libro-principal"]>figure {
+  .page-detalle-libro article[aria-labelledby="titulo-libro-principal"] > figure {
     max-width: 320px;
-    margin-inline: auto;
+    margin-inline: auto; /* Centra la portada en pantallas reducidas */
   }
 
   .page-detalle-libro section[aria-labelledby="titulo-sobre-autor"] article {
@@ -467,16 +495,17 @@
   }
 }
 
+/* Móviles (hasta 600px) */
 @media (max-width: 600px) {
-  .page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"]>p:last-child {
-    flex-direction: column;
+  .page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"] > p:last-child {
+    flex-direction: column; /* Apila los botones de acción en vertical */
   }
 
   .page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"] a {
     width: 100%;
   }
 
-  .page-detalle-libro section[aria-labelledby="titulo-recomendaciones"]>ul {
-    grid-template-columns: 1fr;
+  .page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] > ul {
+    grid-template-columns: 1fr; /* 1 tarjeta de recomendación por fila */
   }
 }
