@@ -7,6 +7,9 @@ Son **provisorias**: ocupan el lugar de las fotos reales de la librería hasta q
 fotos de la librería son del mismo local —Leakey's Bookshop, en la antigua iglesia gaélica de
 Inverness— para que el interior, el salón y la entrada muestren el mismo edificio.
 
+`pawprints-icono.svg` no entra en esta tabla: es el ícono del manual de identidad de la
+cátedra, recortado de `diseño/PAWPrints OpcionVioleta.svg`.
+
 Las seis portadas se compusieron para este TP sobre esas fotos, agregándoles el título y el autor
 con EB Garamond, la tipografía del sitio. Los libros y sus autores son ficticios, así que ninguna
 portada reproduce la tapa de un libro real.

@@ -165,7 +165,9 @@ reserva**.
 
 Se eligió la **Opción Violeta** del manual de identidad
 ([`diseño/PAWPrints OpcionVioleta.svg`](diseño/PAWPrints%20OpcionVioleta.svg)): violeta `#5C068C`
-sobre blanco, con una escala derivada de ese color para hovers, fondos y bordes.
+sobre blanco, con una escala derivada de ese color para hovers, fondos y bordes. El ícono va
+arriba a la izquierda en las cinco páginas, recortado de ese mismo archivo a
+[`img/pawprints-icono.svg`](pawprints/img/pawprints-icono.svg).
 
 Del maquetado del TP1 solo se tocaron dos cosas: los `<link>` del `<head>` y una clase en `<body>`
 que identifica la página. Todo lo demás se estila con selectores estructurales y semánticos

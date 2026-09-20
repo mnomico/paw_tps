@@ -31,6 +31,18 @@ header > p:first-child a {
   color: var(--v700);
   letter-spacing: -0.01em;
   transition: color var(--ease);
+
+  /* El ícono y el nombre son un solo bloque de marca */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+/* Ícono: el SVG ya viene en el violeta corporativo, no hace falta teñirlo */
+header > p:first-child img {
+  height: 32px;
+  width: auto;
+  flex-shrink: 0;
 }
 
 header > p:first-child a:hover {
@@ -354,6 +366,11 @@ input[type="button"]:focus-visible {
 
   header > p:first-child {
     flex: 1;
+  }
+
+  /* En pantallas angostas el nombre ya ocupa dos líneas: el ícono achica */
+  header > p:first-child img {
+    height: 26px;
   }
 
   header > p:last-child {
