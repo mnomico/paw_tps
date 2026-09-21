@@ -292,6 +292,13 @@
   clip: rect(0 0 0 0);
 }
 
+/* Contenedor de la información del autor */
+.page-detalle-libro section[aria-labelledby="titulo-sobre-autor"] article > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
 /* Nombre del autor (H3) */
 .page-detalle-libro section[aria-labelledby="titulo-sobre-autor"] article header h3 {
   font-family: var(--font-serif);
