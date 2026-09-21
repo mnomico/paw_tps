@@ -3,19 +3,16 @@
    sobre-nosotros.css: Estilos específicos de la página Sobre Nosotros
    ================================================================ */
 
-.page-sobre-nosotros main {
-  overflow-x: hidden; /* Previene scroll horizontal indeseado por el full-bleed */
-}
-
 /* ================================================================
    1. HERO (Foto full-bleed con overlay y texto superpuesto)
    ================================================================ */
 .page-sobre-nosotros main > figure:first-child {
   position: relative;
-  /* Full-bleed: rompe el margen del contenedor */
-  margin-inline: calc(-1 * var(--gutter));
-  width: calc(100% + 2 * var(--gutter));
-  max-width: 100vw;
+  /* Ya es de borde a borde: <main> no tiene padding lateral (cada sección
+     pone el suyo), así que no hay margen que romper con márgenes negativos.
+     Compensarlos igual corría la foto a la izquierda y dejaba una franja
+     vacía a la derecha. */
+  width: 100%;
   overflow: hidden;
   background: var(--dark);
   min-height: 380px;
