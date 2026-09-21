@@ -377,23 +377,23 @@ input[type="button"]:focus-visible {
     flex-shrink: 0;
   }
 
+  /* El nav baja a su propia fila, debajo de la marca y el carrito. La regla
+     base le da `flex: 1`, que fija flex-basis en 0: con eso `width: 100%` no
+     alcanza y el nav se metía en la primera fila, recortado. */
   body > header nav {
     order: 3;
-    width: 100%;
+    flex-basis: 100%;
     justify-content: flex-start;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: var(--sp-1);
+    /* Lugar para el punto de la página activa (bottom: -12px) */
+    padding-bottom: var(--sp-2);
   }
 
-  body > header nav::-webkit-scrollbar {
-    display: none;
-  }
-
+  /* Sin scroll horizontal: recortaba el punto y escondía "Sobre Nosotros"
+     sin ningún indicio de que se podía deslizar. Los tres ítems entran hasta
+     en 320px; si no entraran, se van a una segunda línea. */
   body > header nav ul {
     gap: var(--sp-5);
-    white-space: nowrap;
+    flex-wrap: wrap;
   }
 
   body > header search {

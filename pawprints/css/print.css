@@ -32,8 +32,8 @@
   /* ----------------------------------------------------------------
      2. ELEMENTOS NO IMPRIMIBLES (Ocultar)
      ---------------------------------------------------------------- */
-  header search,
-  header > p:last-child,
+  body > header search,
+  body > header > p:last-child,
   #carrito,
   footer > section:last-of-type,
   hr {
@@ -72,7 +72,10 @@
   /* ----------------------------------------------------------------
      4. HEADER Y FOOTER EN IMPRESIÓN
      ---------------------------------------------------------------- */
-  header {
+  /* Siempre `body > header`: las tarjetas de libro (catálogo, detalle,
+     reserva) también tienen su <header>, y apuntar por tipo de elemento
+     las desarmaba y les ocultaba el autor. */
+  body > header {
     position: static;
     border-bottom: 1px solid #CCCCCC;
     padding: 0.3cm 0;
@@ -81,12 +84,21 @@
     align-items: center;
   }
 
-  header nav ul {
+  /* El breakpoint de 768px también rige al imprimir (la hoja mide ≈ 18cm) y
+     baja el nav a una segunda fila; en papel va en la misma línea que la marca */
+  body > header nav {
+    order: 0;
+    flex: 1 1 auto;
+    justify-content: flex-end;
+    padding-bottom: 0;
+  }
+
+  body > header nav ul {
     display: flex;
     gap: 1rem;
   }
 
-  header nav a[aria-current="page"]::after {
+  body > header nav a[aria-current="page"]::after {
     display: none;
   }
 
@@ -97,6 +109,9 @@
     padding: 0.4cm 0;
     border-top: 1px solid #CCCCCC;
     margin-top: 1cm;
+    /* Partido entre dos hojas queda "Navegación" en una y "Contacto" en otra */
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
 
   footer h2,
@@ -351,17 +366,10 @@
     break-inside: avoid;
   }
 
-  /* Las reglas generales de este archivo apuntan al header del sitio por
-     tipo de elemento, y alcanzan también al de la tarjeta del libro. */
+  /* En pantalla el header de la tarjeta es una grilla con el número
+     decorativo a la izquierda; en papel se apila y ocupa menos */
   .page-reserva main aside header {
     display: block;
-    border-bottom: none;
-    padding: 0;
-  }
-
-  /* `header > p:last-child` oculta el carrito, pero acá es el precio */
-  .page-reserva main aside header > p:last-child {
-    display: block !important;
   }
 
   /* El separador de la tarjeta sí se imprime */
@@ -370,5 +378,124 @@
     border: none;
     border-top: 1px solid #CCCCCC;
     margin: 0.3cm 0;
+  }
+
+  /* ----------------------------------------------------------------
+     8. PÁGINA CATÁLOGO (catalogo.html)
+     Se imprime como listado: el buscador, los filtros y el orden sólo
+     sirven con un servidor que responda, así que en papel quedan el
+     título, la cantidad de resultados y las tarjetas.
+     ---------------------------------------------------------------- */
+  .page-catalogo main > section:nth-of-type(1) search,
+  .page-catalogo aside[aria-labelledby="titulo-filtros"],
+  .page-catalogo section[aria-labelledby="titulo-lista-libros"] > form[action="catalogo.html"] {
+    display: none;
+  }
+
+  .page-catalogo main > section:nth-of-type(1) {
+    padding: 0.4cm 0;
+  }
+
+  /* En pantalla es una grilla de dos columnas (filtros | resultados) */
+  .page-catalogo main > section:nth-of-type(2) {
+    display: block;
+  }
+
+  /* Las reglas generales evitan cortar <section>, pero el listado no entra
+     en una carilla: si no se lo deja fluir, salta entero a la hoja
+     siguiente y la primera queda casi vacía. */
+  .page-catalogo main > section:nth-of-type(2),
+  .page-catalogo section[aria-labelledby="titulo-lista-libros"] {
+    page-break-inside: auto;
+    break-inside: auto;
+  }
+
+  .page-catalogo section[aria-labelledby="titulo-lista-libros"] > ul {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.4cm;
+  }
+
+  /* Cada tarjeta, en cambio, se imprime entera */
+  .page-catalogo section[aria-labelledby="titulo-lista-libros"] article {
+    border: 1px solid #CCCCCC;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Sin portadas, como las tarjetas del inicio: ahorro de tinta */
+  .page-catalogo section[aria-labelledby="titulo-lista-libros"] article figure {
+    display: none;
+  }
+
+  /* ----------------------------------------------------------------
+     9. PÁGINA DETALLE DE LIBRO (detalle-libro.html)
+     Se imprime como ficha: portada chica a la izquierda y datos a la
+     derecha, sin los botones de compra/reserva, que en papel no llevan
+     a ningún lado.
+     ---------------------------------------------------------------- */
+  .page-detalle-libro article[aria-labelledby="titulo-libro-principal"] {
+    border: none;
+    padding: 0.4cm 0;
+    /* Las media queries se evalúan contra el ancho de la hoja (A4 menos
+       márgenes ≈ 18cm), así que al imprimir también rige el breakpoint de
+       900px, que apila la ficha en una columna: acá se vuelve a dos. */
+    grid-template-columns: 6cm 1fr;
+    grid-template-areas:
+      "portada header"
+      "portada descripcion"
+      "portada acciones";
+    column-gap: 0.8cm;
+    row-gap: 0.3cm;
+    /* La ficha entera no siempre entra debajo del header en la primera
+       hoja; si no se la deja cortar, salta completa a la segunda */
+    page-break-inside: auto;
+    break-inside: auto;
+  }
+
+  .page-detalle-libro article[aria-labelledby="titulo-libro-principal"] > figure img {
+    border: 1px solid #CCCCCC;
+    border-radius: 0;
+  }
+
+  .page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"] {
+    border: 1px solid #CCCCCC;
+    border-radius: 0;
+    padding: 0.3cm;
+  }
+
+  /* El reset general deja al <mark> sin fondo: un borde lo mantiene como etiqueta */
+  .page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"] mark {
+    border: 1px solid #000000;
+    padding: 0 0.15cm;
+  }
+
+  .page-detalle-libro section[aria-labelledby="titulo-comprar-reservar"] > p:last-child {
+    display: none;
+  }
+
+  .page-detalle-libro section[aria-labelledby="titulo-sobre-autor"] article {
+    display: block;
+    border: 1px solid #CCCCCC;
+    border-radius: 0;
+    padding: 0.3cm;
+    text-align: left; /* el breakpoint de 900px lo centra; en papel va como el resto */
+  }
+
+  /* La foto es ambiental (un escritorio), no identifica al autor */
+  .page-detalle-libro section[aria-labelledby="titulo-sobre-autor"] figure {
+    display: none;
+  }
+
+  .page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] > ul {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4cm;
+  }
+
+  .page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] article {
+    border: 1px solid #CCCCCC;
+  }
+
+  .page-detalle-libro section[aria-labelledby="titulo-recomendaciones"] article figure {
+    display: none;
   }
 }
