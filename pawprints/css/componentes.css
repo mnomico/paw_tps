@@ -1,0 +1,426 @@
+/* ================================================================
+   PAWPrints — Librería
+   componentes.css: Header, Nav, Footer, Aside Carrito, Botones y Tarjetas
+   ================================================================ */
+
+/* ================================================================
+   1. ENCABEZADO (Header) & NAVEGACIÓN (Nav)
+   ================================================================ */
+body > header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  padding: var(--sp-3) var(--gutter);
+  min-height: 60px;
+}
+
+/* Marca / Logo */
+body > header > p:first-child {
+  flex-shrink: 0;
+}
+
+body > header > p:first-child a {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--v700);
+  letter-spacing: -0.01em;
+  transition: color var(--ease);
+
+  /* El ícono y el nombre son un solo bloque de marca */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+/* Ícono: el SVG ya viene en el violeta corporativo, no hace falta teñirlo */
+body > header > p:first-child img {
+  height: 32px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+body > header > p:first-child a:hover {
+  color: var(--v900);
+}
+
+/* Navegación principal */
+body > header nav {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+body > header nav ul {
+  display: flex;
+  gap: var(--sp-8);
+}
+
+body > header nav a {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--dark);
+  padding-bottom: 3px;
+  border-bottom: 2px solid transparent;
+  transition: color var(--ease), border-color var(--ease);
+}
+
+body > header nav a:hover {
+  color: var(--v700);
+}
+
+/* Ítem de página activa */
+body > header nav a[aria-current="page"] {
+  color: var(--v700);
+  font-weight: 600;
+  border-bottom-color: var(--v700);
+  position: relative;
+}
+
+body > header nav a[aria-current="page"]::after {
+  content: '•';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8px;
+  color: var(--v700);
+  line-height: 1;
+}
+
+/* Módulo de Búsqueda */
+body > header search {
+  display: flex;
+}
+
+body > header search form {
+  display: flex;
+  align-items: center;
+  background: var(--v50);
+  border: 1px solid var(--border-v);
+  border-radius: 999px;
+  padding: var(--sp-1) var(--sp-4);
+  gap: var(--sp-2);
+  transition: border-color var(--ease), box-shadow var(--ease);
+}
+
+body > header search form:focus-within {
+  border-color: var(--v700);
+  box-shadow: 0 0 0 3px rgba(92, 6, 140, 0.12);
+}
+
+body > header search label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+body > header search input[type="search"] {
+  border: none;
+  background: transparent;
+  font-size: var(--text-sm);
+  color: var(--dark);
+  outline: none;
+  width: 160px;
+}
+
+body > header search input::placeholder {
+  color: var(--muted);
+}
+
+body > header search button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--v700);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--r-sm);
+  transition: background var(--ease), color var(--ease);
+}
+
+body > header search button:hover {
+  background: var(--v100);
+  color: var(--v900);
+}
+
+/* Enlace Carrito del Header */
+body > header > p:last-child {
+  flex-shrink: 0;
+}
+
+body > header > p:last-child a {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--v700);
+  padding: var(--sp-2) var(--sp-4);
+  background: var(--v50);
+  border: 1px solid var(--border-v);
+  border-radius: var(--r-md);
+  transition: background var(--ease), color var(--ease), border-color var(--ease);
+}
+
+body > header > p:last-child a:hover {
+  background: var(--v700);
+  color: var(--white);
+  border-color: var(--v700);
+}
+
+/* ================================================================
+   2. CARRITO (#carrito) — Aside global compartido
+   ================================================================ */
+#carrito {
+  background: var(--v50);
+  padding: var(--sp-8) var(--gutter);
+  border-top: 1px solid var(--border-v);
+}
+
+#carrito h2 {
+  font-size: var(--text-xl);
+  color: var(--v800);
+  margin-bottom: var(--sp-3);
+}
+
+#carrito p {
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+/* ================================================================
+   3. PIE DE PÁGINA (Footer)
+   ================================================================ */
+footer {
+  background: var(--footer-bg);
+  color: var(--white);
+  padding: var(--sp-16) var(--gutter) var(--sp-8);
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.6fr 1fr;
+  gap: var(--sp-8);
+}
+
+footer hr {
+  display: block;
+  grid-column: 1 / -1;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin: var(--sp-8) 0 0;
+}
+
+footer > p:nth-last-child(2) {
+  grid-column: 1 / -1;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: var(--text-xs);
+  padding-top: var(--sp-4);
+}
+
+footer > p:last-child {
+  grid-column: 1 / -1;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: var(--text-xs);
+  margin-top: calc(-1 * var(--sp-4));
+}
+
+footer section h2,
+footer nav h2 {
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin-bottom: var(--sp-4);
+  color: var(--white);
+}
+
+footer p,
+footer address {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 28ch;
+  line-height: 1.6;
+}
+
+footer ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+footer a {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.65);
+  transition: color var(--ease);
+}
+
+footer a:hover {
+  color: var(--white);
+}
+
+footer nav a:hover {
+  color: #C59EEA; /* Acento lavanda claro */
+}
+
+/* ================================================================
+   4. BOTONES (Clases y componentes reutilizables)
+   ================================================================ */
+.btn,
+button:not(header search button),
+input[type="submit"],
+input[type="button"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.4rem;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: var(--r-md);
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--ease), border-color var(--ease), box-shadow var(--ease), transform var(--ease);
+}
+
+.btn:focus-visible,
+button:focus-visible,
+input[type="submit"]:focus-visible,
+input[type="button"]:focus-visible {
+  outline: 3px solid var(--v500);
+  outline-offset: 2px;
+}
+
+/* Botón primario — Violeta corporativo */
+.btn-primary {
+  background: var(--v700);
+  color: var(--white);
+  border-color: var(--v700);
+}
+
+.btn-primary:hover {
+  background: var(--v600);
+  border-color: var(--v600);
+  box-shadow: var(--sh-md);
+}
+
+/* Botón secundario / outline */
+.btn-secondary,
+.btn-outline {
+  background: transparent;
+  color: var(--v700);
+  border-color: var(--v700);
+}
+
+.btn-secondary:hover,
+.btn-outline:hover {
+  background: var(--v50);
+  box-shadow: var(--sh-sm);
+}
+
+/* ================================================================
+   5. TARJETAS (Patrones modulares reutilizables)
+   ================================================================ */
+.card {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  padding: var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  transition: box-shadow var(--ease), transform var(--ease), border-color var(--ease);
+}
+
+.card:hover {
+  box-shadow: var(--sh-md);
+  transform: translateY(-3px);
+  border-color: var(--border-v);
+}
+
+/* ================================================================
+   6. RESPONSIVE DE COMPONENTES GLOBALES
+   ================================================================ */
+@media (max-width: 1024px) {
+  body > header search {
+    display: none;
+  }
+
+  footer {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  body > header {
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+  }
+
+  body > header > p:first-child {
+    flex: 1;
+  }
+
+  /* En pantallas angostas el nombre ya ocupa dos líneas: el ícono achica */
+  body > header > p:first-child img {
+    height: 26px;
+  }
+
+  body > header > p:last-child {
+    flex-shrink: 0;
+  }
+
+  /* El nav baja a su propia fila, debajo de la marca y el carrito. La regla
+     base le da `flex: 1`, que fija flex-basis en 0: con eso `width: 100%` no
+     alcanza y el nav se metía en la primera fila, recortado. */
+  body > header nav {
+    order: 3;
+    flex-basis: 100%;
+    justify-content: flex-start;
+    /* Lugar para el punto de la página activa (bottom: -12px) */
+    padding-bottom: var(--sp-2);
+  }
+
+  /* Sin scroll horizontal: recortaba el punto y escondía "Sobre Nosotros"
+     sin ningún indicio de que se podía deslizar. Los tres ítems entran hasta
+     en 320px; si no entraran, se van a una segunda línea. */
+  body > header nav ul {
+    gap: var(--sp-5);
+    flex-wrap: wrap;
+  }
+
+  body > header search {
+    display: flex;
+    order: 4;
+    width: 100%;
+  }
+
+  body > header search form {
+    width: 100%;
+  }
+
+  body > header search input[type="search"] {
+    width: 100%;
+  }
+
+  footer {
+    grid-template-columns: 1fr;
+    gap: var(--sp-6);
+    padding: var(--sp-10) var(--gutter) var(--sp-6);
+  }
+
+  footer > p:last-child {
+    text-align: left;
+  }
+
+  footer p {
+    max-width: 100%;
+  }
+}

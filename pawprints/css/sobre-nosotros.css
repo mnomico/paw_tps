@@ -1,0 +1,361 @@
+/* ================================================================
+   PAWPrints — Librería
+   sobre-nosotros.css: Estilos específicos de la página Sobre Nosotros
+   ================================================================ */
+
+/* ================================================================
+   1. HERO (Foto full-bleed con overlay y texto superpuesto)
+   ================================================================ */
+.page-sobre-nosotros main > figure:first-child {
+  position: relative;
+  /* Ya es de borde a borde: <main> no tiene padding lateral (cada sección
+     pone el suyo), así que no hay margen que romper con márgenes negativos.
+     Compensarlos igual corría la foto a la izquierda y dejaba una franja
+     vacía a la derecha. */
+  width: 100%;
+  overflow: hidden;
+  background: var(--dark);
+  min-height: 380px;
+  max-height: 520px;
+}
+
+.page-sobre-nosotros main > figure:first-child img {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  max-height: inherit;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: 0.45;
+  display: block;
+}
+
+/* Figcaption superpuesto en la parte inferior */
+.page-sobre-nosotros main > figure:first-child figcaption {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--sp-12) var(--gutter);
+  max-width: calc(var(--max-w) + 2 * var(--gutter));
+  margin-inline: auto;
+  left: 0;
+  right: 0;
+}
+
+.page-sobre-nosotros main > figure:first-child h1 {
+  font-family: var(--font-serif);
+  font-size: var(--text-4xl);
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: var(--sp-3);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.page-sobre-nosotros main > figure:first-child p {
+  font-size: var(--text-lg);
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 55ch;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* ================================================================
+   2. NUESTRA HISTORIA & PILARES
+   ================================================================ */
+.page-sobre-nosotros main > article {
+  padding: var(--sp-16) var(--gutter);
+  max-width: calc(var(--max-w) + 2 * var(--gutter));
+  margin-inline: auto;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-12);
+  align-items: start;
+}
+
+/* Columna Izquierda: Historia */
+.page-sobre-nosotros main > article > section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.page-sobre-nosotros main > article > section > p time {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--v700);
+}
+
+.page-sobre-nosotros main > article > section > h2 {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 800;
+}
+
+.page-sobre-nosotros main > article > section > p:last-child {
+  font-size: var(--text-base);
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 52ch;
+}
+
+/* Columna Derecha: Aside de Pilares */
+.page-sobre-nosotros main > article > aside {
+  background: var(--v50);
+  border: 1px solid var(--border-v);
+  border-radius: var(--r-xl);
+  padding: var(--sp-8);
+}
+
+.page-sobre-nosotros main > article > aside h3 {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--v800);
+  margin-bottom: var(--sp-6);
+}
+
+.page-sobre-nosotros main > article > aside dl {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.page-sobre-nosotros main > article > aside dt {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--v700);
+  margin-bottom: var(--sp-1);
+}
+
+.page-sobre-nosotros main > article > aside dd {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 100%;
+}
+
+/* ================================================================
+   3. SERVICIOS COMUNITARIOS
+   ================================================================ */
+.page-sobre-nosotros main > section:nth-of-type(1) {
+  background: var(--cream);
+  padding: var(--sp-16) var(--gutter);
+}
+
+.page-sobre-nosotros main > section:nth-of-type(1) > h2 {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  text-align: center;
+  max-width: var(--max-w);
+  margin-inline: auto;
+  margin-bottom: var(--sp-10);
+  display: block;
+}
+
+/* Grid de 3 tarjetas de servicios */
+.page-sobre-nosotros main > section:nth-of-type(1) > ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-6);
+  max-width: var(--max-w);
+  margin-inline: auto;
+}
+
+.page-sobre-nosotros main > section:nth-of-type(1) article {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  padding: var(--sp-8) var(--sp-6);
+  transition: box-shadow var(--ease), transform var(--ease), border-color var(--ease);
+}
+
+.page-sobre-nosotros main > section:nth-of-type(1) article:hover {
+  box-shadow: var(--sh-md);
+  transform: translateY(-3px);
+  border-color: var(--border-v);
+}
+
+/* Iconos ilustrativos por ítem */
+.page-sobre-nosotros main > section:nth-of-type(1) li:nth-child(1) article::before { content: '📖'; }
+.page-sobre-nosotros main > section:nth-of-type(1) li:nth-child(2) article::before { content: '✍️'; }
+.page-sobre-nosotros main > section:nth-of-type(1) li:nth-child(3) article::before { content: '⭐'; }
+
+.page-sobre-nosotros main > section:nth-of-type(1) article::before {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  width: 48px;
+  height: 48px;
+  background: var(--v100);
+  border-radius: var(--r-md);
+  margin-bottom: var(--sp-5);
+}
+
+.page-sobre-nosotros main > section:nth-of-type(1) article h3 {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: var(--sp-3);
+}
+
+.page-sobre-nosotros main > section:nth-of-type(1) article p {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 100%;
+}
+
+/* ================================================================
+   4. UBICACIÓN & MAPA (¿Dónde estamos?)
+   ================================================================ */
+.page-sobre-nosotros main > section:nth-of-type(2) {
+  padding: var(--sp-16) var(--gutter);
+  max-width: calc(var(--max-w) + 2 * var(--gutter));
+  margin-inline: auto;
+
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  grid-template-areas:
+    "eyebrow map"
+    "title   map"
+    "ref     map"
+    "addr    map";
+  column-gap: var(--sp-12);
+  row-gap: var(--sp-4);
+  align-items: start;
+}
+
+.page-sobre-nosotros main > section:nth-of-type(2) > p:first-child     { grid-area: eyebrow; }
+.page-sobre-nosotros main > section:nth-of-type(2) > h2               { grid-area: title;   }
+.page-sobre-nosotros main > section:nth-of-type(2) > p:nth-of-type(2) { grid-area: ref;     }
+.page-sobre-nosotros main > section:nth-of-type(2) > address          { grid-area: addr;    }
+.page-sobre-nosotros main > section:nth-of-type(2) > figure           { grid-area: map; align-self: stretch; }
+
+/* Eyebrow "Visitanos" */
+.page-sobre-nosotros main > section:nth-of-type(2) > p:first-child strong {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--v700);
+}
+
+.page-sobre-nosotros main > section:nth-of-type(2) > h2 {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 800;
+}
+
+.page-sobre-nosotros main > section:nth-of-type(2) > p:nth-of-type(2) {
+  font-size: var(--text-base);
+  color: var(--muted);
+  max-width: 40ch;
+  line-height: 1.65;
+}
+
+.page-sobre-nosotros main > section:nth-of-type(2) > address ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.page-sobre-nosotros main > section:nth-of-type(2) > address li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  font-size: var(--text-sm);
+  color: var(--dark);
+  max-width: 100%;
+  line-height: 1.5;
+}
+
+.page-sobre-nosotros main > section:nth-of-type(2) > address a {
+  color: var(--v700);
+  transition: color var(--ease);
+}
+
+.page-sobre-nosotros main > section:nth-of-type(2) > address a:hover {
+  color: var(--v600);
+  text-decoration: underline;
+}
+
+/* Figura de Mapa */
+.page-sobre-nosotros main > section:nth-of-type(2) > figure {
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  border: 1px solid var(--border-v);
+  background: var(--v50);
+  min-height: 380px;
+}
+
+.page-sobre-nosotros main > section:nth-of-type(2) > figure iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  border: none;
+  display: block;
+}
+
+.page-sobre-nosotros main > section:nth-of-type(2) > figure figcaption {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  padding: var(--sp-2) var(--sp-4);
+  text-align: center;
+}
+
+/* ================================================================
+   5. RESPONSIVE ESPECÍFICO DE SOBRE NOSOTROS
+   ================================================================ */
+@media (max-width: 1024px) {
+  /* Historia en 1 columna */
+  .page-sobre-nosotros main > article {
+    grid-template-columns: 1fr;
+    gap: var(--sp-8);
+  }
+
+  /* Ubicación en 1 columna */
+  .page-sobre-nosotros main > section:nth-of-type(2) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "eyebrow"
+      "title"
+      "ref"
+      "addr"
+      "map";
+  }
+
+  .page-sobre-nosotros main > section:nth-of-type(2) > figure {
+    min-height: 280px;
+  }
+
+  .page-sobre-nosotros main > section:nth-of-type(2) > figure iframe {
+    min-height: 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Hero adaptativo */
+  .page-sobre-nosotros main > figure:first-child {
+    min-height: 260px;
+    max-height: 340px;
+  }
+
+  .page-sobre-nosotros main > figure:first-child h1 {
+    font-size: var(--text-4xl);
+  }
+
+  /* Servicios en 1 columna */
+  .page-sobre-nosotros main > section:nth-of-type(1) > ul {
+    grid-template-columns: 1fr;
+  }
+}

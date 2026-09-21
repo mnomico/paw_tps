@@ -1,0 +1,139 @@
+/* ================================================================
+   PAWPrints — Librería
+   base.css: Reset moderno, Google Fonts y Variables :root globales
+   ================================================================ */
+
+/* ----------------------------------------------------------------
+   1. TIPOGRAFÍA EXTERNA (Google Fonts)
+   EB Garamond para encabezados y subtítulos
+   ---------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
+
+/* ----------------------------------------------------------------
+   2. VARIABLES GLOBALES (:root)
+   ---------------------------------------------------------------- */
+:root {
+  /* ── Paleta Violeta Corporativa (derivada del logo SVG #5C068C) ── */
+  --v900: #2A0045;   /* Violeta muy oscuro — hover profundo / sombras */
+  --v800: #3D0060;   /* Violeta oscuro — texto de marca y subtítulos   */
+  --v700: #5C068C;   /* ★ VIOLETA CORPORATIVO PRINCIPAL              */
+  --v600: #6E0BA8;   /* Violeta medio — hover primario               */
+  --v500: #8A1FC4;   /* Violeta vibrante — acentos y estados activos */
+  --v100: #EDE0F7;   /* Lavanda suave — fondos de tarjetas e iconos  */
+  --v50:  #F7F0FE;   /* Lavanda muy claro — fondos alternados         */
+
+  /* ── Neutros y Fondos ────────────────────────────────────────── */
+  --cream:      #F8F4EF;   /* Fondo secciones alternas (tono cálido) */
+  --beige:      #EDE8E2;   /* Tarjetas secundarias y cajas           */
+  --white:      #FFFFFF;
+  --dark:       #1A1A1A;   /* Texto principal de alto contraste      */
+  --footer-bg:  #1C1C1C;   /* Fondo carbón oscuro para footer        */
+  --muted:      #6B6B6B;   /* Texto secundario y leyendas            */
+  --border:     #DDD6D0;   /* Bordes neutros sutiles                 */
+  --border-v:   #C8B4E0;   /* Bordes con tinte violeta lavanda       */
+
+  /* ── Familias Tipográficas ────────────────────────────────────── */
+  /* EB Garamond exclusiva para títulos; Sans-Serif limpia para cuerpo */
+  --font-serif: 'EB Garamond', Georgia, 'Times New Roman', serif;
+  --font-sans:  -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+
+  /* ── Escala Tipográfica Fluida / Armónica ─────────────────────── */
+  --text-xs:   0.6875rem;   /* 11px */
+  --text-sm:   0.875rem;    /* 14px */
+  --text-base: 1rem;        /* 16px */
+  --text-lg:   1.125rem;    /* 18px */
+  --text-xl:   1.25rem;     /* 20px */
+  --text-2xl:  1.5rem;      /* 24px */
+  --text-3xl:  2rem;        /* 32px */
+  --text-4xl:  2.75rem;     /* 44px */
+  --text-hero: 4rem;        /* 64px */
+
+  /* ── Escala de Espaciado Modular ─────────────────────────────── */
+  --sp-1:  0.25rem;  /*  4px */
+  --sp-2:  0.5rem;   /*  8px */
+  --sp-3:  0.75rem;  /* 12px */
+  --sp-4:  1rem;     /* 16px */
+  --sp-5:  1.25rem;  /* 20px */
+  --sp-6:  1.5rem;   /* 24px */
+  --sp-8:  2rem;     /* 32px */
+  --sp-10: 2.5rem;   /* 40px */
+  --sp-12: 3rem;     /* 48px */
+  --sp-16: 4rem;     /* 64px */
+  --sp-20: 5rem;     /* 80px */
+
+  /* ── Layout & Contenedores ───────────────────────────────────── */
+  --max-w:  1160px;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+
+  /* ── Bordes y Sombras ────────────────────────────────────────── */
+  --r-sm:  4px;
+  --r-md:  8px;
+  --r-lg:  12px;
+  --r-xl:  16px;
+  --sh-sm: 0 1px 4px  rgba(92, 6, 140, 0.08);
+  --sh-md: 0 4px 14px rgba(92, 6, 140, 0.13);
+  --sh-lg: 0 8px 28px rgba(92, 6, 140, 0.16);
+
+  /* ── Transiciones ────────────────────────────────────────────── */
+  --ease: 0.2s ease;
+}
+
+/* ----------------------------------------------------------------
+   3. RESET MODERNO & CONFIGURACIÓN BASE
+   ---------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  color: var(--dark);
+  background-color: var(--white);
+}
+
+/* Regla estricta de tipografía: EB Garamond exclusiva para encabezados */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  line-height: 1.15;
+  color: var(--dark);
+  font-weight: 700;
+}
+
+/* Tipografía Sans-Serif limpia para cuerpo de texto y controles */
+p, span, li, input, button, select, textarea, label, address, small, data, time {
+  font-family: var(--font-sans);
+}
+
+img, iframe {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+address {
+  font-style: normal;
+}
+
+/* Los separadores semánticos se manejan visualmente por padding/fondos */
+hr {
+  display: none;
+}

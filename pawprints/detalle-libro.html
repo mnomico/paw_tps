@@ -4,9 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>El Laberinto de los Vientos — PAWPrints</title>
-  <meta name="description" content="Ficha completa del libro El Laberinto de los Vientos de Salvador Baez: descripción, datos del autor y opción de reserva.">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/componentes.css">
+  <link rel="stylesheet" href="css/detalle-libro.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
 </head>
-<body>
+<body class="page-detalle-libro">
 
   <!-- ============================================================
        HEADER — compartido por las 5 pantallas del wireframe.
@@ -16,8 +19,11 @@
   <header>
 
     <!-- El nombre de la marca va como enlace y no como encabezado para no
-         competir con el <h1> de cada página, que describe su contenido. -->
-    <p><a href="index.html">PAWPrints — Librería</a></p>
+         competir con el <h1> de cada página, que describe su contenido.
+         El ícono lleva alt="" porque es decorativo: el texto del enlace ya
+         nombra la marca, y anunciarla dos veces sería ruido en un lector de
+         pantalla. -->
+    <p><a href="index.html"><img src="img/pawprints-icono.svg" alt="" width="22" height="32">PAWPrints — Librería</a></p>
 
     <nav aria-label="Navegación principal">
       <ul>
@@ -95,15 +101,19 @@
       
       <article>
         <figure>
-          <img src="img/autor-salvador-baez.jpg" alt="Fotografía del autor Salvador Baez">
-          <figcaption>Salvador Baez</figcaption>
+          <!-- No se usa un retrato: el autor es ficticio y poner la cara de una
+               persona real le atribuiría una identidad que no es la suya. -->
+          <img src="img/autor-salvador-baez.jpg" alt="Escritorio de trabajo de Salvador Baez, con una máquina de escribir, hojas y una taza">
+          <figcaption>El escritorio de Salvador Baez</figcaption>
         </figure>
-        <header>
-          <h3>Salvador Baez</h3>
-        </header>
-        <p>
-          Salvador Baez es un destacado escritor y ensayista contemporáneo. Apasionado por la narrativa fantástica y las ficciones filosóficas, ha publicado diversas obras aclamadas por la crítica y los lectores.
-        </p>
+        <div>
+          <header>
+            <h3>Salvador Baez</h3>
+          </header>
+          <p>
+            Salvador Baez es un destacado escritor y ensayista contemporáneo. Apasionado por la narrativa fantástica y las ficciones filosóficas, ha publicado diversas obras aclamadas por la crítica y los lectores.
+          </p>
+        </div>
       </article>
     </section>
 

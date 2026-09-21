@@ -1,0 +1,411 @@
+/* ================================================================
+   PAWPrints — Librería
+   reserva.css: Estilos específicos de la página de Reserva
+   ================================================================ */
+
+/* El wireframe pone toda la página sobre un fondo cálido; se aplica al
+   body y no a <main> para que el color llegue de borde a borde. */
+.page-reserva {
+  background: var(--cream);
+}
+
+/* ================================================================
+   1. LAYOUT DE DOS COLUMNAS (formulario + resumen)
+   ================================================================ */
+
+/* El wireframe alinea el resumen del libro con el borde superior de la
+   tarjeta del formulario, pero el título y el formulario viven en dos
+   <section> hermanas distintas. La rejilla se arma en <main> y la
+   sección contenedora se vuelve transparente al layout con
+   `display: contents`, así sus hijos (article y aside) entran como
+   celdas. Sin soporte, cae a bloques apilados: se lee igual. */
+.page-reserva main {
+  max-width: calc(var(--max-w) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding: var(--sp-16) var(--gutter);
+
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  grid-template-areas:
+    "titulo resumen"
+    "form   resumen";
+  column-gap: var(--sp-8);
+  row-gap: 0; /* título y formulario son una sola tarjeta: no se separan */
+  align-items: start;
+}
+
+.page-reserva main > section:nth-of-type(2) {
+  display: contents;
+}
+
+/* ================================================================
+   2. TARJETA DEL FORMULARIO
+   El título y el <article> del formulario se dibujan como dos mitades
+   de una misma tarjeta: la de arriba sin borde inferior y la de abajo
+   sin borde superior.
+   ================================================================ */
+.page-reserva main > section:nth-of-type(1) {
+  grid-area: titulo;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  padding: var(--sp-10) var(--sp-10) var(--sp-5);
+}
+
+.page-reserva main > section:nth-of-type(1) h1 {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  margin-bottom: var(--sp-3);
+}
+
+.page-reserva main > section:nth-of-type(1) p {
+  font-size: var(--text-base);
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 60ch;
+}
+
+.page-reserva main > section:nth-of-type(2) > article {
+  grid-area: form;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--r-xl) var(--r-xl);
+  padding: 0 var(--sp-10) var(--sp-10);
+}
+
+/* ================================================================
+   3. FORMULARIO
+   ================================================================ */
+.page-reserva main form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+/* Los <fieldset> agrupan semánticamente, pero el wireframe no dibuja
+   ningún recuadro ni título de grupo: se quitan los bordes. */
+.page-reserva main form fieldset {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+/* Las leyendas se ocultan a la vista pero siguen anunciándose en
+   lectores de pantalla (mismo recurso que el label del buscador). */
+.page-reserva main form legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Cada bloque etiqueta + control */
+.page-reserva main form fieldset > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+/* Correo y teléfono comparten fila en el wireframe (segundo bloque del
+   primer fieldset). */
+.page-reserva main form fieldset:nth-of-type(1) > div:nth-of-type(2) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-5);
+}
+
+.page-reserva main form fieldset:nth-of-type(1) > div:nth-of-type(2) > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.page-reserva main form label {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--dark);
+}
+
+/* El asterisco de campo obligatorio: sin el subrayado punteado que el
+   navegador le pone por defecto a <abbr title>. */
+.page-reserva main form abbr[title] {
+  color: var(--v700);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: help;
+}
+
+/* ── Controles ─────────────────────────────────────────────────── */
+.page-reserva main form input,
+.page-reserva main form select,
+.page-reserva main form textarea {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--dark);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 0.7rem var(--sp-4);
+  transition: border-color var(--ease), box-shadow var(--ease);
+}
+
+.page-reserva main form ::placeholder {
+  color: var(--muted);
+}
+
+/* Anillo violeta suave al enfocar con el mouse… */
+.page-reserva main form input:focus,
+.page-reserva main form select:focus,
+.page-reserva main form textarea:focus {
+  outline: none;
+  border-color: var(--v700);
+  box-shadow: 0 0 0 3px rgba(92, 6, 140, 0.15);
+}
+
+/* …y outline sólido para teclado, igual que los botones de componentes.css */
+.page-reserva main form input:focus-visible,
+.page-reserva main form select:focus-visible,
+.page-reserva main form textarea:focus-visible {
+  outline: 3px solid var(--v500);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* :user-invalid y no :invalid, porque :invalid marcaría en rojo los
+   campos obligatorios apenas carga la página, sin que nadie los tocara. */
+.page-reserva main form input:user-invalid,
+.page-reserva main form select:user-invalid,
+.page-reserva main form textarea:user-invalid {
+  border-color: #C0392B;
+}
+
+.page-reserva main form textarea {
+  resize: vertical;
+  min-height: 7rem;
+  line-height: 1.6;
+}
+
+/* Flecha propia del desplegable: el control nativo no es estilable. */
+.page-reserva main form select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: var(--sp-10);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%235C068C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--sp-4) center;
+  background-size: 12px 8px;
+}
+
+/* La cantidad va acotada a 5: no necesita el ancho de la fila */
+.page-reserva main form input[type="number"] {
+  max-width: 7rem;
+}
+
+.page-reserva main form small {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+/* ── Botón de envío ────────────────────────────────────────────── */
+.page-reserva main form > div:last-child {
+  margin-top: var(--sp-2);
+}
+
+.page-reserva main form button[type="submit"] {
+  width: 100%;
+  background: var(--v700);
+  border-color: var(--v700);
+  color: var(--white);
+  font-size: var(--text-base);
+  padding: 0.9rem 1.4rem;
+}
+
+.page-reserva main form button[type="submit"]:hover {
+  background: var(--v600);
+  border-color: var(--v600);
+  box-shadow: var(--sh-md);
+}
+
+/* ================================================================
+   4. RESUMEN DEL LIBRO (columna derecha)
+   ================================================================ */
+
+/* El wireframe usa un beige de la paleta vieja; acá se traduce al
+   lavanda de la identidad violeta, como el aside de sobre-nosotros. */
+.page-reserva main > section:nth-of-type(2) > aside {
+  grid-area: resumen;
+  background: var(--v50);
+  border: 1px solid var(--border-v);
+  border-radius: var(--r-xl);
+  padding: var(--sp-8);
+
+  /* El formulario es largo: el resumen acompaña el scroll. El desfase
+     deja libre la altura del header sticky. */
+  position: sticky;
+  top: calc(60px + var(--sp-6));
+}
+
+/* componentes.css estiliza `header` por tipo de elemento, así que sus
+   reglas también caen sobre el <header> de esta tarjeta. Se lo devuelve
+   a un bloque normal antes de maquetarlo. */
+.page-reserva main aside header {
+  position: static;
+  z-index: auto;
+  min-height: 0;
+  padding: 0;
+  background: none;
+  border-bottom: none;
+
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--sp-5);
+  row-gap: var(--sp-1);
+  align-items: center;
+}
+
+/* "Libro 1": número decorativo grande, ocupa la columna izquierda entera */
+.page-reserva main aside header > p:nth-of-type(1) {
+  grid-column: 1;
+  grid-row: 1 / 4;
+}
+
+.page-reserva main aside header > p:nth-of-type(1) strong {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--v800);
+  line-height: 1.1;
+}
+
+.page-reserva main aside header h3 {
+  grid-column: 2;
+  grid-row: 1;
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.page-reserva main aside header > p:nth-of-type(2) {
+  grid-column: 2;
+  grid-row: 2;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.page-reserva main aside header > p:nth-of-type(3) {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.page-reserva main aside header > p:nth-of-type(3) strong {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--v700);
+}
+
+/* base.css oculta los <hr> del documento porque los separadores del
+   maquetado se resuelven con fondos; este sí es parte del diseño. */
+.page-reserva main aside hr {
+  display: block;
+  border: none;
+  border-top: 1px solid var(--border-v);
+  margin-block: var(--sp-5);
+}
+
+/* Beneficios de reservar */
+.page-reserva main aside ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.page-reserva main aside li {
+  position: relative;
+  padding-left: var(--sp-6);
+  font-size: var(--text-sm);
+  color: var(--dark);
+  line-height: 1.5;
+}
+
+.page-reserva main aside li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--v700);
+  font-weight: 700;
+}
+
+/* ================================================================
+   5. RESPONSIVE ESPECÍFICO DE RESERVA
+   ================================================================ */
+@media (max-width: 1024px) {
+  /* Una sola columna: el resumen pasa debajo del formulario */
+  .page-reserva main {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "titulo"
+      "form"
+      "resumen";
+  }
+
+  .page-reserva main > section:nth-of-type(2) > aside {
+    position: static;
+    margin-top: var(--sp-8);
+  }
+}
+
+@media (max-width: 768px) {
+  .page-reserva main {
+    padding: var(--sp-10) var(--gutter);
+  }
+
+  .page-reserva main > section:nth-of-type(1) {
+    padding: var(--sp-6) var(--sp-6) var(--sp-4);
+  }
+
+  .page-reserva main > section:nth-of-type(1) h1 {
+    font-size: var(--text-2xl);
+  }
+
+  .page-reserva main > section:nth-of-type(2) > article {
+    padding: 0 var(--sp-6) var(--sp-6);
+  }
+
+  /* Correo y teléfono dejan de compartir fila */
+  .page-reserva main form fieldset:nth-of-type(1) > div:nth-of-type(2) {
+    grid-template-columns: 1fr;
+    gap: var(--sp-5);
+  }
+
+  .page-reserva main > section:nth-of-type(2) > aside {
+    padding: var(--sp-6);
+  }
+}
+
+@media (max-width: 480px) {
+  /* La tarjeta del libro se apila: el número ya no comparte fila */
+  .page-reserva main aside header {
+    grid-template-columns: 1fr;
+  }
+
+  .page-reserva main aside header > p:nth-of-type(1),
+  .page-reserva main aside header h3,
+  .page-reserva main aside header > p:nth-of-type(2),
+  .page-reserva main aside header > p:nth-of-type(3) {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .page-reserva main form input[type="number"] {
+    max-width: 100%;
+  }
+}
