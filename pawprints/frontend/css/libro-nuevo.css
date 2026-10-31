@@ -149,6 +149,105 @@
   color: var(--muted);
 }
 
+.page-libro-nuevo input[type="file"] {
+  cursor: pointer;
+  padding: var(--sp-3) var(--sp-4);
+}
+
+/* ================================================================
+   ZONA DE ARRASTRE DE TAPAS (TP4, consigna 3)
+   ================================================================ */
+.zona-arrastre-input-oculto {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.zona-arrastre {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--sp-2);
+  padding: var(--sp-6) var(--sp-4);
+  background: var(--v50);
+  border: 2px dashed var(--border-v);
+  border-radius: var(--r-lg);
+  cursor: pointer;
+  transition: border-color var(--ease), background-color var(--ease), box-shadow var(--ease), transform var(--ease);
+}
+
+.zona-arrastre:hover {
+  border-color: var(--v600);
+  background-color: var(--v100);
+}
+
+.zona-arrastre:focus {
+  outline: none;
+}
+
+.zona-arrastre:focus-visible {
+  outline: 3px solid var(--v500);
+  outline-offset: 2px;
+}
+
+/* Al arrastrar encima cambia de aspecto y se resalta */
+.zona-arrastre.arrastrando {
+  border-color: var(--v700);
+  border-style: solid;
+  background-color: var(--v100);
+  box-shadow: 0 0 0 4px rgba(92, 6, 140, 0.2);
+  transform: scale(1.01);
+}
+
+.zona-arrastre.con-archivo {
+  border-color: var(--v700);
+  border-style: solid;
+  background-color: #FDF9FF;
+}
+
+.zona-arrastre-icono {
+  color: var(--v700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--sp-1);
+}
+
+.zona-arrastre-instruccion {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--v900);
+}
+
+.zona-arrastre-estado {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--v700);
+}
+
+.zona-arrastre-aviso {
+  background: #FFF9E6;
+  border: 1px solid #F1C40F;
+  border-radius: var(--r-sm);
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--text-xs);
+  color: #7D6608;
+  margin-top: var(--sp-2);
+}
+
+.zona-arrastre-aviso[hidden] {
+  display: none;
+}
+
 /* ================================================================
    2. ERRORES
    Los marca aria-invalid, que ponen tanto el servidor como validador.js:

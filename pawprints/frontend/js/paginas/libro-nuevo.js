@@ -3,6 +3,7 @@
  * sabe controlar.
  */
 import { Validador } from '../componentes/validador.js';
+import { ZonaArrastre } from '../componentes/zona-arrastre.js';
 
 /**
  * El dígito verificador del ISBN-13, la misma cuenta que LibroNuevo::isbnValido() en el servidor:
@@ -18,3 +19,9 @@ function isbnValido(valor) {
 }
 
 new Validador(document.querySelector('form[data-validar]')).regla('isbn', isbnValido);
+
+const contenedorTapa = document.querySelector('[data-zona-arrastre]');
+if (contenedorTapa) {
+  new ZonaArrastre(contenedorTapa);
+}
+

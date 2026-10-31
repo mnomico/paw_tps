@@ -80,7 +80,7 @@ $opciones = static function (array $lista, string $elegida): string {
       <!-- Sin novalidate en el HTML: sin JavaScript, el navegador valida con los atributos de cada
            campo. validador.js lo agrega al arrancar y desde ahí muestra sus propios mensajes, que
            se ven igual en todos los navegadores. El servidor vuelve a validar todo igual. -->
-      <form action="/libros/nuevo" method="post" aria-labelledby="titulo-libro-nuevo" data-validar>
+      <form action="/libros/nuevo" method="post" enctype="multipart/form-data" aria-labelledby="titulo-libro-nuevo" data-validar>
 
         <fieldset>
           <legend>Datos del libro</legend>
@@ -128,6 +128,12 @@ $opciones = static function (array $lista, string $elegida): string {
                    autocomplete="off" placeholder="978-987-1234-56-1" data-regla="isbn"<?= $atributos('isbn', 'ayuda-isbn') ?>>
             <small id="ayuda-isbn">Los 13 números del código de barras. Los guiones son opcionales.</small>
             <?= $mensaje('isbn') ?>
+          </div>
+
+          <div class="campo campo-tapa" data-zona-arrastre>
+            <label for="tapa">Tapa del libro</label>
+            <input type="file" id="tapa" name="tapa" accept="image/jpeg,image/png,image/webp" aria-describedby="ayuda-tapa">
+            <small id="ayuda-tapa">Formatos: JPG, PNG o WebP. Hasta 2 MB.</small>
           </div>
         </fieldset>
 
