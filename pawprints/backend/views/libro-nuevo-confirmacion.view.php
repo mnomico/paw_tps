@@ -38,6 +38,10 @@ require __DIR__ . '/layouts/header.php';
         <dt>Descripción</dt>
         <dd><?= nl2br(htmlspecialchars($libro->descripcion)) ?></dd>
         <?php endif; ?>
+        <?php if (!empty($tapa['name'])): ?>
+        <dt>Tapa</dt>
+        <dd><?= htmlspecialchars($tapa['name']) ?> (<?= number_format(((int) ($tapa['size'] ?? 0)) / 1024, 0, ',', '.') ?> KB)</dd>
+        <?php endif; ?>
       </dl>
 
       <ul>

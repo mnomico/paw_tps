@@ -35,13 +35,22 @@ class LibroNuevoController extends Controller
             $campos[$campo] = $request->input($campo, '');
         }
 
+        $tapa = $request->file('tapa');
+        $tapaEnviada = is_array($tapa) && ($tapa['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
+
         try {
             $libro = LibroNuevo::desdeFormulario($campos, $this->libros());
         } catch (LibroNuevoInvalido $error) {
-            return $this->mostrar($campos, $error->errores, 422);
+            return $this->mostrar($campos, $error->errores, 422, $tapaEnviada);
         }
 
         $this->logger->info('Libro nuevo validado: ISBN {isbn}', ['isbn' => $libro->isbn]);
+        if ($tapaEnviada) {
+            $this->logger->info('Tapa recibida: {name} ({size} bytes)', [
+                'name' => (string) ($tapa['name'] ?? ''),
+                'size' => (int) ($tapa['size'] ?? 0),
+            ]);
+        }
 
         // La respuesta es directa, sin redirigir a otra página como hace la reserva: el libro no
         // se guarda (ver LibroNuevo), así que recargar y reenviar el formulario no duplica nada, y
@@ -53,6 +62,7 @@ class LibroNuevoController extends Controller
             'pageClass' => 'page-libro-nuevo-confirmacion',
             'extraCss' => ['libro-nuevo.css'],
             'libro' => $libro,
+            'tapa' => $tapaEnviada ? $tapa : null,
         ]);
     }
 
@@ -62,7 +72,7 @@ class LibroNuevoController extends Controller
      * @param array<string, string> $valores
      * @param array<string, string> $errores
      */
-    private function mostrar(array $valores, array $errores = [], int $estado = 200): Response
+    private function mostrar(array $valores, array $errores = [], int $estado = 200, bool $tapaEnviada = false): Response
     {
         return $this->render('libro-nuevo', [
             'title' => 'Cargar un libro nuevo — PAWPrints',
@@ -73,6 +83,7 @@ class LibroNuevoController extends Controller
             'extraJs' => ['paginas/libro-nuevo.js'],
             'valores' => $valores + array_fill_keys(self::CAMPOS, ''),
             'errores' => $errores,
+            'tapaEnviada' => $tapaEnviada,
             'generos' => array_keys($this->libros()->generos()),
             'formatos' => array_keys($this->libros()->formatos()),
             'mensajes' => LibroNuevo::MENSAJES,
