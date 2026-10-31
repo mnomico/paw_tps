@@ -38,7 +38,13 @@ require __DIR__ . '/layouts/header.php';
         <dt>Descripción</dt>
         <dd><?= nl2br(htmlspecialchars($libro->descripcion)) ?></dd>
         <?php endif; ?>
-        <?php if (!empty($tapa['name'])): ?>
+        <?php if (!empty($libro->imagen)): ?>
+        <dt>Tapa</dt>
+        <dd>
+          <img src="/img/tapas/<?= htmlspecialchars($libro->imagen) ?>" alt="Tapa de <?= htmlspecialchars($libro->titulo) ?>" width="120" height="170" style="max-width: 120px; height: auto; border-radius: var(--r-md); box-shadow: var(--sh-md); display: block; margin-bottom: var(--sp-2);">
+          <span><?= htmlspecialchars($libro->imagen) ?></span>
+        </dd>
+        <?php elseif (!empty($tapa['name'])): ?>
         <dt>Tapa</dt>
         <dd><?= htmlspecialchars($tapa['name']) ?> (<?= number_format(((int) ($tapa['size'] ?? 0)) / 1024, 0, ',', '.') ?> KB)</dd>
         <?php endif; ?>
