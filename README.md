@@ -656,6 +656,63 @@ Se usa con `new Carrusel(contenedor)`, donde el contenedor tiene las `<img>`:
 - **Accesibilidad.** Los botones tienen nombre para los lectores de pantalla, que anuncian la foto
   elegida a mano, pero no cada pase automático.
 
+### 2. Formulario de libros nuevos
+
+> Se pide implementar todas las validaciones y devoluciones en línea que correspondan al formulario de carga de "libros nuevos", logrando uniformar la experiencia de usuario en todos los navegadores.
+
+El sitio no tenía formulario de libros nuevos, así que se creó: **`/libros/nuevo`**, enlazado desde
+el pie de página. Lo atienden [`LibroNuevoController`](pawprints/backend/src/Controllers/LibroNuevoController.php),
+la [vista](pawprints/backend/views/libro-nuevo.view.php) y el modelo
+[`LibroNuevo`](pawprints/backend/src/Models/LibroNuevo.php). La validación en línea es el componente
+[`validador.js`](pawprints/frontend/js/componentes/validador.js), y [la página](pawprints/frontend/js/paginas/libro-nuevo.js)
+le agrega la regla del ISBN.
+
+| Campo | Regla |
+| --- | --- |
+| Título | Obligatorio, hasta 150 caracteres |
+| Autor | Obligatorio, hasta 100 caracteres |
+| Género y formato | Obligatorios, uno de los que ya tiene el catálogo |
+| ISBN | Obligatorio: 978 o 979 y diez números más, con guiones o espacios opcionales, con el dígito verificador correcto y sin repetir uno del catálogo |
+| Precio | Obligatorio, entero entre 1 y 1.000.000 |
+| Stock | Obligatorio, entero entre 0 y 9.999 |
+| Resumen | Obligatorio, hasta 300 caracteres |
+| Descripción | Opcional, hasta 2000 caracteres |
+
+Cómo se comporta:
+
+- Cada campo se valida **al salir de él**, y desde ahí **en cada cambio**: el mensaje aparece al
+  lado del campo y desaparece en cuanto se corrige. Antes de que el usuario pase por un campo, no
+  se lo marca.
+- **Al enviar** se validan todos. Si hay errores, el formulario no se envía, arriba se listan los
+  errores con enlaces a cada campo y el foco va al primero que falla.
+- El **servidor vuelve a validar todo** con las mismas reglas, más las que necesitan conocer el
+  catálogo: que el género y el formato existan y que el ISBN no esté repetido. Sus errores se
+  muestran de la misma forma.
+- Si todo está bien, la respuesta muestra la ficha con los datos cargados.
+
+#### Decisiones
+
+- **Mensajes propios, no los del navegador.** Los globos nativos cambian de un navegador a otro en
+  el texto, el idioma y el aspecto. Con JavaScript el formulario pasa a `novalidate` y los mensajes
+  son de la página. Las reglas igual salen de los atributos de HTML (`required`, `maxlength`, `min`,
+  `max`, `step`, `pattern`), que el navegador evalúa con la Constraint Validation API.
+- **Los mismos mensajes en el navegador y en el servidor.** Están una sola vez, en
+  `LibroNuevo::MENSAJES`. La vista los pasa a los atributos `data-error-*` de cada campo y de ahí
+  los toma `validador.js`. El usuario lee lo mismo lo detecte quien lo detecte.
+- **Sin JavaScript también se valida.** El `novalidate` lo pone el script: sin él, el formulario
+  conserva la validación del navegador y la del servidor.
+- **Accesibilidad.** Cada mensaje está enlazado a su campo con `aria-describedby`, junto con la ayuda
+  que ya tuviera, y el campo con error lleva `aria-invalid`. El resumen tiene `role="alert"`, así el
+  lector de pantalla lo anuncia. El error no se marca sólo con color: siempre va el texto.
+- **Al apretar «Cargar libro» no se valida el campo que pierde el foco.** Si su mensaje apareciera en
+  ese momento, correría el botón hacia abajo y el clic se perdería. El envío lo valida igual, junto
+  con todos los demás.
+- **Todavía no se guarda.** El catálogo es [`libros.json`](pawprints/backend/data/libros.json), que
+  está versionado: agregarle libros desde el sitio modificaría el repositorio en cada prueba. Se
+  guarda cuando el TP5 traiga la base de datos. Por eso la respuesta es directa y no redirige a
+  otra página: reenviarla no duplica nada.
+- **La tapa** se carga con el componente de arrastrar y soltar de la consigna 3.
+
 ## Entorno de desarrollo
 
 | Componente | Versión |
