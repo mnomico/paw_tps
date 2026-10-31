@@ -1,0 +1,406 @@
+/* ================================================================
+   PAWPrints — Librería
+   carrusel.css: el carrusel de imágenes (js/componentes/carrusel.js)
+   ================================================================
+   Se apoya en dos estados que pone el JS en el contenedor:
+   - .carrusel--armado: el script ya armó diapositivas, botones y miniaturas.
+   - .carrusel--cargado: las fotos terminaron de bajar y la barra de progreso se va.
+   Sin JS el contenedor tiene sólo las <img>, y se ve la primera.
+   ================================================================ */
+
+.carrusel {
+  --carrusel-proporcion: 4 / 3;
+  --carrusel-duracion: 0.7s;
+  --carrusel-fondo: var(--v50);
+  position: relative;
+}
+
+/* ----------------------------------------------------------------
+   1. SIN JAVASCRIPT: la primera foto, como en el TP3
+   ---------------------------------------------------------------- */
+.carrusel:not(.carrusel--armado) > img {
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--carrusel-proporcion);
+  object-fit: cover;
+}
+
+.carrusel:not(.carrusel--armado) > img:not(:first-child) {
+  display: none;
+}
+
+/* ----------------------------------------------------------------
+   2. PANTALLA Y DIAPOSITIVAS
+   Todas las diapositivas se apilan en el mismo lugar; la transición
+   decide cómo entra la actual y cómo se va la anterior.
+   ---------------------------------------------------------------- */
+.carrusel:focus-visible {
+  outline: 3px solid var(--v500);
+  outline-offset: 2px;
+}
+
+.carrusel__pantalla {
+  position: relative;
+  aspect-ratio: var(--carrusel-proporcion);
+  overflow: hidden;
+  background: var(--carrusel-fondo);
+  /* El navegador se queda con el scroll vertical y el JS con el arrastre horizontal (swipe). */
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.carrusel__pista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  inset: 0;
+}
+
+.carrusel__diapositiva {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  /* La que se va sigue visible hasta que termina de animarse, y recién ahí se oculta. */
+  transition:
+    opacity var(--carrusel-duracion) ease,
+    transform var(--carrusel-duracion) ease,
+    visibility 0s linear var(--carrusel-duracion);
+}
+
+.carrusel__diapositiva.es-actual {
+  visibility: visible;
+  z-index: 1;
+  transition:
+    opacity var(--carrusel-duracion) ease,
+    transform var(--carrusel-duracion) ease,
+    visibility 0s;
+}
+
+.carrusel__diapositiva.sin-transicion {
+  transition: none;
+}
+
+.carrusel__diapositiva img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  -webkit-user-drag: none;
+}
+
+/* ----------------------------------------------------------------
+   3. LAS TRES TRANSICIONES
+   ---------------------------------------------------------------- */
+
+/* Fundido: la nueva aparece sobre la anterior. */
+.carrusel--fundido .carrusel__diapositiva {
+  opacity: 0;
+}
+
+.carrusel--fundido .carrusel__diapositiva.es-actual {
+  opacity: 1;
+}
+
+/* Deslizar: la nueva entra por un costado y empuja a la anterior por el otro. Esperan del lado
+   de adelante; .desde-atras las ubica del otro lado cuando se va hacia atrás. */
+.carrusel--deslizar .carrusel__diapositiva {
+  transform: translateX(100%);
+}
+
+.carrusel--deslizar .carrusel__diapositiva.desde-atras,
+.carrusel--deslizar .carrusel__diapositiva.sale-hacia-atras {
+  transform: translateX(-100%);
+}
+
+.carrusel--deslizar .carrusel__diapositiva.es-actual {
+  transform: none;
+}
+
+/* Zoom: la nueva se acerca desde más grande mientras aparece, y la anterior se aleja. */
+.carrusel--zoom .carrusel__diapositiva {
+  opacity: 0;
+  transform: scale(1.15);
+}
+
+.carrusel--zoom .carrusel__diapositiva.sale-hacia-atras,
+.carrusel--zoom .carrusel__diapositiva.sale-hacia-adelante {
+  transform: scale(0.9);
+}
+
+.carrusel--zoom .carrusel__diapositiva.es-actual {
+  opacity: 1;
+  transform: none;
+}
+
+/* Quien pidió menos movimiento ve el cambio de foto sin animación. */
+@media (prefers-reduced-motion: reduce) {
+  .carrusel__diapositiva,
+  .carrusel__diapositiva.es-actual {
+    transition: none;
+  }
+}
+
+/* ----------------------------------------------------------------
+   4. BARRA DE PROGRESO DE LA CARGA
+   ---------------------------------------------------------------- */
+.carrusel__carga {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  padding: var(--sp-6);
+  background: var(--carrusel-fondo);
+  transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+}
+
+.carrusel--cargado .carrusel__carga {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.carrusel__porcentaje {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--v800);
+}
+
+.carrusel__barra {
+  appearance: none;
+  width: min(80%, 260px);
+  height: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--v100);
+  overflow: hidden;
+}
+
+.carrusel__barra::-webkit-progress-bar {
+  background: var(--v100);
+  border-radius: 999px;
+}
+
+.carrusel__barra::-webkit-progress-value {
+  background: var(--v700);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.carrusel__barra::-moz-progress-bar {
+  background: var(--v700);
+  border-radius: 999px;
+}
+
+/* ----------------------------------------------------------------
+   5. BOTONES SOBRE LA FOTO
+   Pisan el estilo general de los botones de componentes.css: estos
+   son redondos y van encima de la imagen.
+   ---------------------------------------------------------------- */
+.carrusel .carrusel__flecha,
+.carrusel .carrusel__accion {
+  position: absolute;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border-v);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--v700);
+  font-size: var(--text-xl);
+  line-height: 1;
+  box-shadow: var(--sh-sm);
+}
+
+.carrusel .carrusel__flecha:hover,
+.carrusel .carrusel__accion:hover {
+  background: var(--white);
+  border-color: var(--v700);
+}
+
+.carrusel .carrusel__flecha {
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--text-3xl);
+}
+
+.carrusel .carrusel__flecha--anterior { left: var(--sp-3); }
+.carrusel .carrusel__flecha--siguiente { right: var(--sp-3); }
+
+.carrusel .carrusel__accion--completa {
+  top: var(--sp-3);
+  right: var(--sp-3);
+}
+
+/* ----------------------------------------------------------------
+   6. MINIATURAS, PAUSA Y EFECTO
+   ---------------------------------------------------------------- */
+.carrusel__controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  background: var(--white);
+}
+
+.carrusel__miniaturas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: var(--sp-2);
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.carrusel .carrusel__miniatura {
+  display: block;
+  width: 64px;
+  height: 48px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--r-sm);
+  background: none;
+  overflow: hidden;
+  opacity: 0.6;
+  transition: opacity var(--ease), border-color var(--ease);
+}
+
+.carrusel .carrusel__miniatura:hover {
+  opacity: 1;
+  background: none;
+}
+
+.carrusel .carrusel__miniatura[aria-current="true"] {
+  opacity: 1;
+  border-color: var(--v700);
+}
+
+.carrusel__miniatura img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  -webkit-user-drag: none;
+}
+
+.carrusel .carrusel__accion--pausa {
+  position: static;
+  font-size: var(--text-sm);
+}
+
+.carrusel__efecto {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.carrusel__efecto select {
+  font: inherit;
+  color: var(--dark);
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--white);
+}
+
+/* Para lectores de pantalla: anuncia la foto elegida sin ocupar lugar en la página. */
+.carrusel__estado {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------------
+   7. PANTALLA COMPLETA
+   :fullscreen cuando el navegador la permite; .carrusel--completa
+   cuando no (el iPhone), fijando el carrusel al viewport.
+   ---------------------------------------------------------------- */
+.carrusel:fullscreen,
+.carrusel.carrusel--completa {
+  --carrusel-fondo: #000;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: #000;
+}
+
+.carrusel.carrusel--completa {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+/* En pantalla completa la foto se ve entera, achicada para entrar en el viewport, en lugar de
+   recortada para llenar el recuadro. */
+.carrusel:fullscreen .carrusel__pantalla,
+.carrusel.carrusel--completa .carrusel__pantalla {
+  flex: 1;
+  aspect-ratio: auto;
+}
+
+.carrusel:fullscreen .carrusel__diapositiva img,
+.carrusel.carrusel--completa .carrusel__diapositiva img {
+  object-fit: contain;
+}
+
+.carrusel:fullscreen .carrusel__controles,
+.carrusel.carrusel--completa .carrusel__controles {
+  background: #111;
+  justify-content: center;
+}
+
+.carrusel:fullscreen .carrusel__miniaturas,
+.carrusel.carrusel--completa .carrusel__miniaturas {
+  flex: 0 1 auto;
+}
+
+.carrusel:fullscreen .carrusel__efecto,
+.carrusel.carrusel--completa .carrusel__efecto {
+  color: #ccc;
+}
+
+/* Con el carrusel ocupando el viewport, la página de atrás no se desplaza. */
+.carrusel-abierto {
+  overflow: hidden;
+}
+
+/* ----------------------------------------------------------------
+   8. CELULAR
+   ---------------------------------------------------------------- */
+@media (max-width: 480px) {
+  /* Las miniaturas van en su propia fila: al lado de la pausa y del efecto no entran. */
+  .carrusel__miniaturas {
+    flex-basis: 100%;
+  }
+
+  .carrusel .carrusel__miniatura {
+    width: 52px;
+    height: 40px;
+  }
+}
+
+/* ----------------------------------------------------------------
+   9. IMPRESIÓN: sólo la foto actual, sin controles
+   ---------------------------------------------------------------- */
+@media print {
+  .carrusel__flecha,
+  .carrusel__accion,
+  .carrusel__carga,
+  .carrusel__controles {
+    display: none !important;
+  }
+}

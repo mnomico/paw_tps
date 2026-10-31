@@ -11,12 +11,13 @@ estado con el que se entregó.
 | [TP1](#tp1--maquetado-web) | Maquetado con HTML5 | `tp1` |
 | [TP2](#tp2--estilos) | Identidad visual y CSS | `tp2` |
 | [TP3](#tp3--programación-backend-1) | Backend en PHP con MVC | `TP3-v3.0.0` |
+| [TP4](#tp4--programación-frontend) | Componentes propios en JavaScript | `tp4` |
 
 ## Estructura del repositorio
 
 | Ruta | Contenido |
 | --- | --- |
-| [`pawprints/frontend/`](pawprints/frontend/) | Raíz pública del sitio: front controller, [`css/`](pawprints/frontend/css/), [`img/`](pawprints/frontend/img/) y las maquetas del TP2 |
+| [`pawprints/frontend/`](pawprints/frontend/) | Raíz pública del sitio: front controller, [`css/`](pawprints/frontend/css/), [`js/`](pawprints/frontend/js/), [`img/`](pawprints/frontend/img/) y las maquetas del TP2 |
 | [`pawprints/backend/`](pawprints/backend/) | El backend en PHP, fuera de la raíz pública ([arquitectura](#1-arquitectura)) |
 | [`diseño/`](diseño/) | [SiteMap](diseño/SiteMap/), [wireframes](diseño/Wireframes/) y logo de la identidad corporativa |
 | [`autores.txt`](autores.txt) | Nombre, apellido y legajo de cada integrante |
@@ -570,6 +571,90 @@ done                                                 # todas 200
 curl -s -o /dev/null -w '%{http_code}\n' https://3-23-199-91.sslip.io/libros/9999   # 404
 curl -s -o /dev/null -w '%{http_code}\n' https://3-23-199-91.sslip.io/backend/config/config.ini   # 404
 ```
+
+## TP4 — Programación Frontend
+
+### JavaScript del sitio
+
+Todo el JavaScript es propio, sin librerías de terceros, y está en
+[`pawprints/frontend/js/`](pawprints/frontend/js/), dentro de la raíz pública:
+
+- [`js/componentes/`](pawprints/frontend/js/componentes/): los componentes reutilizables, uno por
+  archivo. Cada uno es un módulo ES que exporta una clase y recibe el elemento sobre el que
+  trabaja; no sale a buscar nada por su cuenta en el documento.
+- [`js/paginas/`](pawprints/frontend/js/paginas/): un archivo por página, que importa los
+  componentes y los inicializa sobre sus elementos.
+
+Cada controlador dice qué script necesita su página con `extraJs`, igual que hace con las hojas de
+estilo en `extraCss`, y el [layout](pawprints/backend/views/layouts/header.php) lo carga con
+`<script type="module">`. Por ejemplo, el inicio:
+
+```php
+'extraCss' => ['inicio.css', 'carrusel.css'],
+'extraJs' => ['paginas/inicio.js'],
+```
+
+```js
+import { Carrusel } from '../componentes/carrusel.js';
+
+new Carrusel(document.querySelector('.page-inicio .carrusel'));
+```
+
+No hay JavaScript dentro de las vistas: ni `<script>` con código ni atributos como `onclick`.
+
+#### Decisiones
+
+- **Mejora progresiva.** El HTML que arma el servidor funciona solo y el JavaScript lo mejora. Si
+  el script falla, tarda o está desactivado, la página se sigue viendo y usando como en el TP3: el
+  inicio muestra la primera foto en lugar del carrusel.
+- **Módulos ES.** Cada archivo declara lo que importa, así que no hay variables globales ni un
+  orden de carga que respetar. Además se ejecutan diferidos: pueden ir en el `<head>` sin frenar el
+  dibujo de la página.
+
+### 1. Carrusel
+
+> Implementar una librería que permita convertir un listado de imágenes en slides (diapositivas) de imágenes de tipo "carousel". Debe cumplir con las reglas del Diseño Responsivo y deberá contar con diferentes efectos de transición en el pasaje de imágenes (3 como mínimo). Además, se debe mostrar una barra de progreso que muestre el avance (porcentual) de la descarga de las imágenes de tal manera que cuando llegue al 100% empiece a animarse la muestra de imágenes. Las diapositivas deben poder pasarse por thumbs, por botones, por swipe y presionando las teclas de las flechas.
+>
+> Solo recibirá como parámetro el contenedor de las imágenes y debe permitir trabajar dentro del contenedor y ocupando todo el viewport redimensionando las imágenes para tal fin.
+
+La librería es [`carrusel.js`](pawprints/frontend/js/componentes/carrusel.js), con sus estilos en
+[`carrusel.css`](pawprints/frontend/css/carrusel.css). En el [inicio](pawprints/backend/views/inicio.view.php)
+ocupa el recuadro «Imagen del lugar» del wireframe, con fotos de la librería.
+
+Se usa con `new Carrusel(contenedor)`, donde el contenedor tiene las `<img>`:
+
+```html
+<div class="carrusel" data-transicion="fundido" data-elegir-transicion aria-label="Fotos de la librería">
+  <img src="/img/local.jpg" alt="…">
+  <img src="/img/clientes.jpg" alt="…">
+</div>
+```
+
+| Pide el enunciado | Cómo se resolvió |
+| --- | --- |
+| Sólo recibe el contenedor | Las opciones se leen de los atributos del contenedor: `data-transicion`, `data-intervalo` (milisegundos entre foto y foto, 5000 por defecto) y `data-elegir-transicion` |
+| Tres transiciones | `fundido`, `deslizar` y `zoom`. Cada una es una clase de CSS; el JS sólo marca qué foto entra y cuál sale. Con `data-elegir-transicion`, un desplegable «Efecto» las cambia en vivo |
+| Barra de progreso | Un `<progress>` tapa la foto y muestra el porcentaje de imágenes descargadas, con los eventos `load` y `error` de cada una. Al llegar al 100 % desaparece y arranca el pase automático |
+| Thumbs | Una miniatura por foto; la actual se marca con `aria-current` |
+| Botones | Anterior y siguiente sobre la foto |
+| Swipe | Pointer Events: un arrastre horizontal de más de 50 px, con el dedo o con el mouse, cambia de foto |
+| Flechas del teclado | ← y → con el foco en el carrusel |
+| Dentro del contenedor o en todo el viewport | Dentro del contenedor, la foto lo llena (`object-fit: cover`). El botón ⤢ lo pasa a pantalla completa y ahí la foto se achica para entrar entera (`object-fit: contain`) |
+| Responsivo | En el celular el carrusel va arriba del texto, en 16:9, con las miniaturas en su propia fila |
+
+#### Decisiones
+
+- **Las fotos vienen en el HTML.** El componente no las agrega: las toma del contenedor y arma
+  alrededor lo que necesita. Sin JavaScript se ve la primera foto.
+- **Las flechas del teclado sólo con el foco en el carrusel.** Si el carrusel las escuchara en toda
+  la página, se las sacaría al scroll y a los campos de texto.
+- **Pausa.** El pase automático se detiene mientras el mouse o el foco están sobre el carrusel,
+  cuando la pestaña no se ve y con el botón ❚❚. Quien tiene activado «reducir movimiento» en su
+  sistema ve las fotos sin animación y sin pase automático.
+- **Pantalla completa sin la Fullscreen API.** El iPhone no deja poner un elemento a pantalla
+  completa. Ahí el carrusel se fija al viewport con CSS, y `Esc` o el botón ✕ lo cierran.
+- **Accesibilidad.** Los botones tienen nombre para los lectores de pantalla, que anuncian la foto
+  elegida a mano, pero no cada pase automático.
 
 ## Entorno de desarrollo
 

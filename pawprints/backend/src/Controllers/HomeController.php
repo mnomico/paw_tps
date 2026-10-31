@@ -21,7 +21,8 @@ class HomeController extends Controller
             'description' => 'Librería independiente en Mercedes, Buenos Aires. Catálogo en línea, envíos a toda Argentina y tienda física.',
             'activePage' => 'inicio',
             'pageClass' => 'page-inicio',
-            'extraCss' => ['inicio.css'],
+            'extraCss' => ['inicio.css', 'carrusel.css'],
+            'extraJs' => ['paginas/inicio.js'],
         ]);
     }
 }

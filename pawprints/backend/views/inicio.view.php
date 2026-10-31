@@ -27,8 +27,15 @@ require __DIR__ . '/layouts/header.php';
         <li><a href="/sobre-nosotros">Conocer nuestra tienda</a> <small>(tienda física)</small></li>
       </ul>
 
+      <!-- El carrusel de la consigna 1 del TP4 ocupa el recuadro «Imagen del lugar» del wireframe.
+           Las fotos ya vienen en el HTML: sin JavaScript se ve la primera, como en el TP3, y
+           carrusel.js arma el resto (diapositivas, barra de carga, botones y miniaturas). -->
       <figure>
-        <img src="/img/local.jpg" alt="Interior de la librería PAWPrints: estanterías de madera y sillones de lectura">
+        <div class="carrusel" data-transicion="fundido" data-elegir-transicion aria-label="Fotos de la librería">
+          <img src="/img/local.jpg" alt="Interior de la librería PAWPrints: estanterías de madera y sillones de lectura">
+          <img src="/img/clientes.jpg" alt="Clientes de PAWPrints eligiendo libros en el salón principal">
+          <img src="/img/entrada-tienda.jpg" alt="Entrada de la librería PAWPrints en Mercedes, Buenos Aires">
+        </div>
         <figcaption>Nuestro local en Mercedes, Buenos Aires.</figcaption>
       </figure>
     </section>

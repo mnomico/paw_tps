@@ -132,15 +132,9 @@
   overflow: hidden;
   border: 1px solid var(--border-v);
   background: var(--v50);
-  aspect-ratio: 4 / 3;
 }
 
-.page-inicio main > section:nth-of-type(1) > figure img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
+/* El recuadro lo llena el carrusel (carrusel.css): la proporción de la foto es la suya. */
 
 .page-inicio main > section:nth-of-type(1) > figure figcaption {
   font-size: var(--text-xs);
@@ -583,7 +577,10 @@
   .page-inicio main > section:nth-of-type(1) > figure {
     grid-column: 1;
     grid-row: 1;
-    aspect-ratio: 16 / 9;
+  }
+
+  .page-inicio main > section:nth-of-type(1) > figure .carrusel {
+    --carrusel-proporcion: 16 / 9;
   }
 
   .page-inicio main > section:nth-of-type(1) > p:first-child   { grid-column: 1; grid-row: 2; }
