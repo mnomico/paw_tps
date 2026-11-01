@@ -110,16 +110,38 @@ final class LibroRepository extends JsonRepository implements CatalogoDeLibros
                 || ($libro['precio'] >= $rango[0] && ($rango[1] === null || $libro['precio'] <= $rango[1]));
         }));
 
-        // El orden de por defecto es el del catálogo, que no necesita ordenar nada.
-        match ((string) ($filtros['orden'] ?? '')) {
-            'precio-asc' => usort($libros, static fn (array $a, array $b): int => $a['precio'] <=> $b['precio']),
-            'precio-desc' => usort($libros, static fn (array $a, array $b): int => $b['precio'] <=> $a['precio']),
-            'titulo-az' => usort(
-                $libros,
-                static fn (array $a, array $b): int => self::normalizar($a['titulo']) <=> self::normalizar($b['titulo']),
-            ),
+        return self::ordenar($libros, (string) ($filtros['orden'] ?? ''));
+    }
+
+    /**
+     * Ordena por título, autor o precio, en forma ascendente (`-asc`) o descendente (`-desc`). El
+     * autor va por el nombre tal como está escrito, no por apellido, y los textos se comparan sin
+     * tildes ni mayúsculas. usort es estable desde PHP 8.0: los empates quedan en el orden del
+     * catálogo. Un orden desconocido, «recomendados» incluido, deja el orden del catálogo.
+     *
+     * @param list<Libro> $libros
+     *
+     * @return list<Libro>
+     */
+    private static function ordenar(array $libros, string $orden): array
+    {
+        $partes = explode('-', $orden);
+        if (count($partes) !== 2 || !in_array($partes[1], ['asc', 'desc'], true)) {
+            return $libros;
+        }
+        [$campo, $sentido] = $partes;
+
+        $clave = match ($campo) {
+            'titulo', 'autor' => static fn (array $libro): string => self::normalizar($libro[$campo]),
+            'precio' => static fn (array $libro): int => $libro['precio'],
             default => null,
         };
+        if ($clave === null) {
+            return $libros;
+        }
+
+        $signo = $sentido === 'asc' ? 1 : -1;
+        usort($libros, static fn (array $a, array $b): int => $signo * ($clave($a) <=> $clave($b)));
 
         return $libros;
     }

@@ -32,9 +32,12 @@ class CatalogoController extends Controller
      */
     private const ORDENES = [
         'recomendados' => 'Recomendados',
+        'titulo-asc' => 'Título: A - Z',
+        'titulo-desc' => 'Título: Z - A',
+        'autor-asc' => 'Autor: A - Z',
+        'autor-desc' => 'Autor: Z - A',
         'precio-asc' => 'Precio: Menor a Mayor',
         'precio-desc' => 'Precio: Mayor a Menor',
-        'titulo-az' => 'Título: A - Z',
     ];
 
     private ?LibroRepository $libros = null;
