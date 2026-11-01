@@ -75,6 +75,7 @@ class CatalogoController extends Controller
             'activePage' => 'catalogo',
             'pageClass' => 'page-catalogo',
             'extraCss' => ['catalogo.css'],
+            'extraJs' => ['paginas/catalogo.js'],
             'libros' => array_slice($resultados, ($pagina - 1) * $porPagina, $porPagina),
             'total' => $total,
             'pagina' => $pagina,
@@ -136,6 +137,31 @@ class CatalogoController extends Controller
         $this->logger->info('Catálogo exportado a CSV: {libros} libro(s)', ['libros' => count($libros)]);
 
         return Response::download($csv, 'text/csv; charset=utf-8', 'catalogo-pawprints.csv');
+    }
+
+    /**
+     * GET /catalogo/json — el catálogo entero, en el orden del archivo, para que el JS del
+     * catálogo lo traiga una sola vez y busque, filtre, ordene y pagine en el navegador. Lleva
+     * sólo los campos que usan las tarjetas y la búsqueda: el stock y la descripción larga no.
+     */
+    public function json(Request $request): Response
+    {
+        $libros = array_map(
+            static fn (array $libro): array => [
+                'id' => $libro['id'],
+                'titulo' => $libro['titulo'],
+                'autor' => $libro['autor'],
+                'genero' => $libro['genero'],
+                'isbn' => $libro['isbn'],
+                'formato' => $libro['formato'],
+                'precio' => $libro['precio'],
+                'resumen' => $libro['resumen'],
+                'imagen' => $libro['imagen'],
+            ],
+            $this->libros()->todos(),
+        );
+
+        return Response::json($libros);
     }
 
     /**

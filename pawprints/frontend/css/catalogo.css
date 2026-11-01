@@ -304,6 +304,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-6);
+  scroll-margin-top: 90px; /* Al cambiar de página en JS, que el header sticky no tape el principio */
 }
 
 /* Ocultar accesiblemente el H3 de la lista */

@@ -34,6 +34,17 @@ final class Response
         return new self($text, $status, ['Content-Type' => 'text/plain; charset=utf-8'] + $headers);
     }
 
+    /**
+     * Datos para que los lea el JS, como el catálogo que se filtra en el navegador. Las tildes
+     * viajan tal cual y no como \u00e1, y las barras sin escapar.
+     */
+    public static function json(mixed $datos, int $status = 200): self
+    {
+        $json = json_encode($datos, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+
+        return new self($json, $status, ['Content-Type' => 'application/json; charset=utf-8']);
+    }
+
     /** Después de un POST va 303, para que recargar la página no reenvíe el formulario. */
     public static function redirect(string $location, int $status = 302): self
     {

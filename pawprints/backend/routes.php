@@ -17,10 +17,11 @@ return static function (Router $router): void {
     $router->get('/', [HomeController::class, 'index']);
     $router->get('/sobre-nosotros', [SobreNosotrosController::class, 'index']);
 
-    // El catálogo y la ficha de cada libro. El CSV es otra representación del mismo listado, y
-    // por eso es otra ruta y no un parámetro: identifica al recurso, no a la vista.
+    // El catálogo y la ficha de cada libro. El CSV y el JSON son otras representaciones del mismo
+    // listado, y por eso son otras rutas y no un parámetro: identifican al recurso, no a la vista.
     $router->get('/catalogo', [CatalogoController::class, 'index']);
     $router->get('/catalogo/csv', [CatalogoController::class, 'csv']);
+    $router->get('/catalogo/json', [CatalogoController::class, 'json']);
     $router->get('/libros/{id}', [CatalogoController::class, 'libro']);
 
     // El mismo /reserva muestra el formulario (GET) y lo recibe (POST).
