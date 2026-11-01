@@ -238,6 +238,56 @@
   font-weight: 600;
 }
 
+/* Rango de precio: «Desde» y «Hasta», uno al lado del otro */
+.page-catalogo aside .rango-precio {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+
+.page-catalogo aside .rango-precio p {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-width: 0; /* Deja que el campo se achique en lugar de desbordar la grilla */
+}
+
+.page-catalogo aside .rango-precio label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.page-catalogo aside .rango-precio input {
+  width: 100%;
+  min-height: 44px; /* Cómodo de tocar en el celular */
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--dark);
+  background: var(--white);
+}
+
+.page-catalogo aside .rango-precio input:focus {
+  outline: none;
+  border-color: var(--v700);
+  box-shadow: 0 0 0 3px rgba(92, 6, 140, 0.15);
+}
+
+/* Aviso del JS cuando «Desde» supera a «Hasta» */
+.page-catalogo aside .rango-precio-aviso {
+  margin-top: var(--sp-2);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: #b42318; /* Rojo de error, con contraste suficiente sobre blanco */
+}
+
+.page-catalogo aside .rango-precio input[aria-invalid] {
+  border-color: #b42318;
+}
+
 /* Botón "Aplicar Filtros" */
 .page-catalogo aside button[type="submit"] {
   width: 100%;
@@ -266,6 +316,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-6);
+  scroll-margin-top: 90px; /* Al cambiar de página en JS, que el header sticky no tape el principio */
 }
 
 /* Ocultar accesiblemente el H3 de la lista */
@@ -613,5 +664,101 @@
   .page-catalogo nav[aria-label="Paginado del catálogo"] a {
     min-width: 2.25rem;
     padding: var(--sp-2);
+  }
+}
+
+/* Lo que el JS oculta con el atributo hidden (los botones «Aplicar Filtros» y «Actualizar», el
+   aviso del rango de precio) tiene que quedar oculto aunque sus reglas le den otro display. */
+.page-catalogo [hidden] {
+  display: none !important;
+}
+
+/* ================================================================
+   6. FILTROS PLEGABLES Y CONTROLES PARA EL CELULAR (TP4)
+   El botón «Filtros» lo agrega el JS: sin JS no existe y los
+   filtros quedan siempre a la vista.
+   ================================================================ */
+.page-catalogo .boton-filtros {
+  display: none; /* En pantallas grandes los filtros están siempre abiertos */
+}
+
+@media (max-width: 900px) {
+  /* El botón reemplaza al título del panel, que queda sólo para los lectores de pantalla */
+  .page-catalogo aside:has(.boton-filtros) #titulo-filtros {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .page-catalogo .boton-filtros {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 44px;
+    padding: var(--sp-2) var(--sp-4);
+    border: 1px solid var(--border-v);
+    border-radius: var(--r-md);
+    background: var(--v50);
+    color: var(--v800);
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* Flecha que gira según el panel esté abierto o cerrado */
+  .page-catalogo .boton-filtros::after {
+    content: "▾";
+    transition: transform var(--ease);
+  }
+
+  .page-catalogo .boton-filtros[aria-expanded="true"] {
+    margin-bottom: var(--sp-5);
+  }
+
+  .page-catalogo .boton-filtros[aria-expanded="true"]::after {
+    transform: rotate(180deg);
+  }
+
+  .page-catalogo aside[data-plegado] form {
+    display: none;
+  }
+
+  .page-catalogo aside[aria-labelledby="titulo-filtros"]:has(.boton-filtros) {
+    padding: var(--sp-3);
+  }
+
+  /* Controles de 44 × 44 px como mínimo, cómodos de tocar */
+  .page-catalogo aside fieldset li {
+    min-height: 44px;
+  }
+
+  .page-catalogo aside fieldset input[type="radio"] {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+
+  .page-catalogo aside fieldset label {
+    min-height: 44px;
+  }
+
+  .page-catalogo aside button[type="submit"],
+  .page-catalogo main > section:nth-of-type(1) search input[type="search"],
+  .page-catalogo main > section:nth-of-type(1) search button,
+  .page-catalogo section[aria-labelledby="titulo-lista-libros"] form select,
+  .page-catalogo section[aria-labelledby="titulo-lista-libros"] form button {
+    min-height: 44px;
+  }
+
+  .page-catalogo nav[aria-label="Paginado del catálogo"] a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
   }
 }

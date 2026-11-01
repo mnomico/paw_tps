@@ -16,7 +16,6 @@
  * @var array<string, string> $filtros  los de la query, sin los vacíos
  * @var array<string, int>    $generos  género => cuántos libros
  * @var array<string, int>    $formatos formato => cuántos libros
- * @var array<string, string> $rangos   valor => etiqueta del rango de precio
  * @var array<string, string> $ordenes  valor => etiqueta del desplegable
  */
 require __DIR__ . '/layouts/header.php';
@@ -25,11 +24,12 @@ $pesos = static fn (int $monto): string => '$' . number_format($monto, 0, ',', '
 
 /**
  * Un enlace que conserva la vista actual y cambia sólo lo que se le pasa; un valor vacío saca
- * ese parámetro. Devuelve la URL ya escapada, lista para un href.
+ * ese parámetro. Devuelve la URL ya escapada, lista para un href. Los filtros van en el orden de
+ * FILTROS y la página al final, igual que la URL que arma el JS del catálogo.
  */
 $url = static function (string $base, array $cambios = []) use ($filtros): string {
     $query = array_filter(
-        $cambios + $filtros,
+        array_merge($filtros, $cambios),
         static fn ($valor): bool => $valor !== '' && $valor !== null,
     );
 
@@ -53,16 +53,53 @@ $ocultos = static function (array $excepto) use ($filtros): void {
 $buscado = $filtros['q'] ?? '';
 $generoActivo = $filtros['genero'] ?? '';
 $formatoActivo = $filtros['formato'] ?? '';
-$precioActivo = $filtros['precio'] ?? '';
+$precioDesde = $filtros['precio_desde'] ?? '';
+$precioHasta = $filtros['precio_hasta'] ?? '';
 $ordenActivo = $filtros['orden'] ?? '';
+
+// El tramo del listado que se ve en esta página, contado desde 1.
+$primero = ($pagina - 1) * $porPagina + 1;
+$ultimo = $primero + count($libros) - 1;
 
 // Un identificador válido para el id de cada control, a partir del valor del filtro.
 $slug = static fn (string $valor): string => preg_replace('/[^a-z0-9]+/', '-', strtolower(
     strtr($valor, ['á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ñ' => 'n', '&' => 'y']),
 )) ?? '';
+
+/**
+ * Una tarjeta del listado. Sin libro imprime la tarjeta vacía del <template> que completa el JS
+ * del catálogo: así el HTML de la tarjeta está en un solo lugar y los estilos, que se cuelgan de
+ * la estructura, valen igual para las dos. El JS completa cada [data-campo] con textContent.
+ */
+$tarjeta = static function (?array $libro) use ($pesos): void {
+    $campo = static fn (string $nombre): string => $libro === null ? '' : htmlspecialchars((string) $libro[$nombre]);
+    $ficha = $libro === null ? '' : "/libros/{$libro['id']}";
+    $imagen = $libro === null ? '' : '/img/' . htmlspecialchars($libro['imagen']);
+    $alt = $libro === null ? '' : 'Portada del libro ' . htmlspecialchars($libro['titulo']);
+    $precio = $libro === null ? '' : $pesos($libro['precio']);
+    ?>
+          <li>
+            <article>
+              <figure>
+                <img src="<?= $imagen ?>" alt="<?= $alt ?>">
+                <figcaption data-campo="formato"><?= $campo('formato') ?></figcaption>
+              </figure>
+              <header>
+                <p><small>GÉNERO: <span data-campo="genero"><?= $campo('genero') ?></span></small></p>
+                <h4><a href="<?= $ficha ?>" data-campo="titulo"><?= $campo('titulo') ?></a></h4>
+                <p><strong>Autor:</strong> <span data-campo="autor"><?= $campo('autor') ?></span></p>
+              </header>
+              <p><small><strong>Descripción:</strong> <span data-campo="resumen"><?= $campo('resumen') ?></span></small></p>
+              <p><strong>Precio:</strong> <data value="<?= $campo('precio') ?>"><?= $precio ?></data></p>
+              <p><a href="<?= $ficha ?>">Ver detalles &rarr;</a></p>
+            </article>
+          </li>
+    <?php
+};
 ?>
 
-  <main>
+  <!-- data-catalogo-json: de dónde trae el JS el catálogo entero para filtrar en el navegador. -->
+  <main data-catalogo-json="/catalogo/json">
 
     <!-- ============================================================
          PRESENTACIÓN Y BÚSQUEDA — el buscador conserva los filtros
@@ -74,7 +111,7 @@ $slug = static fn (string $valor): string => preg_replace('/[^a-z0-9]+/', '-', s
       <p>Navega entre nuestra colección de libros físicos y digitales.</p>
 
       <search>
-        <form action="/catalogo" method="get">
+        <form action="/catalogo" method="get" id="catalogo-busqueda">
           <label for="buscar-catalogo">Buscar por título, autor, género o ISBN:</label>
           <input type="search" id="buscar-catalogo" name="q" value="<?= htmlspecialchars($buscado) ?>"
                  maxlength="100" placeholder="Buscar por título, autor, género o ISBN...">
@@ -97,7 +134,7 @@ $slug = static fn (string $valor): string => preg_replace('/[^a-z0-9]+/', '-', s
       <aside aria-labelledby="titulo-filtros">
         <h3 id="titulo-filtros">Filtros</h3>
 
-        <form action="/catalogo" method="get">
+        <form action="/catalogo" method="get" id="catalogo-filtros">
 
           <fieldset>
             <legend>Categorías</legend>
@@ -131,24 +168,26 @@ $slug = static fn (string $valor): string => preg_replace('/[^a-z0-9]+/', '-', s
             </ul>
           </fieldset>
 
+          <!-- El rango de precio son dos montos libres, en pesos e inclusivos. Un campo vacío es
+               «sin límite»; si el mínimo supera al máximo, el servidor no aplica el filtro. -->
           <fieldset>
             <legend>Rango de Precio</legend>
-            <ul>
-              <li>
-                <input type="radio" id="precio-todos" name="precio" value=""<?= $precioActivo === '' ? ' checked' : '' ?>>
-                <label for="precio-todos">Cualquier precio</label>
-              </li>
-              <?php foreach ($rangos as $valor => $etiqueta): ?>
-              <li>
-                <input type="radio" id="precio-<?= $slug($valor) ?>" name="precio" value="<?= htmlspecialchars($valor) ?>"<?= $precioActivo === $valor ? ' checked' : '' ?>>
-                <label for="precio-<?= $slug($valor) ?>"><?= htmlspecialchars($etiqueta) ?></label>
-              </li>
-              <?php endforeach; ?>
-            </ul>
+            <div class="rango-precio">
+              <p>
+                <label for="precio-desde">Desde ($)</label>
+                <input type="number" id="precio-desde" name="precio_desde" value="<?= htmlspecialchars($precioDesde) ?>"
+                       min="0" step="1" inputmode="numeric" placeholder="Sin mínimo">
+              </p>
+              <p>
+                <label for="precio-hasta">Hasta ($)</label>
+                <input type="number" id="precio-hasta" name="precio_hasta" value="<?= htmlspecialchars($precioHasta) ?>"
+                       min="0" step="1" inputmode="numeric" placeholder="Sin máximo">
+              </p>
+            </div>
           </fieldset>
 
           <button type="submit">Aplicar Filtros</button>
-          <?php $ocultos(['genero', 'formato', 'precio']); ?>
+          <?php $ocultos(['genero', 'formato', 'precio_desde', 'precio_hasta']); ?>
         </form>
       </aside>
 
@@ -157,18 +196,21 @@ $slug = static fn (string $valor): string => preg_replace('/[^a-z0-9]+/', '-', s
            mismo listado en CSV.
            ============================================================ -->
       <section aria-labelledby="titulo-lista-libros">
-        <h3 id="titulo-lista-libros">Resultados</h3>
+        <template id="plantilla-libro">
+          <?php $tarjeta(null); ?>
+        </template>
 
-        <p>
-          Mostrando <strong><?= $total ?> <?= $total === 1 ? 'libro' : 'libros' ?></strong>
-          <?php if ($buscado !== ''): ?>
-          para <em>«<?= htmlspecialchars($buscado) ?>»</em>
-          <?php endif; ?>
-          <?php if ($generoActivo !== ''): ?>
-          de <em><?= htmlspecialchars($generoActivo) ?></em>
-          <?php endif; ?>
-          <?php if ($paginas > 1): ?>
-          — página <?= $pagina ?> de <?= $paginas ?>
+        <h3 id="titulo-lista-libros" tabindex="-1">Resultados</h3>
+
+        <!-- «Mostrando X–Y de Z»: qué tramo del listado se ve y cuántos libros hay en total. El
+             JS del catálogo arma este mismo texto cuando redibuja el listado, y aria-live hace que
+             el lector de pantalla lo anuncie. -->
+        <p id="catalogo-resumen" aria-live="polite">
+          <?php if ($total === 0): ?>
+          Mostrando <strong>0 libros</strong>
+          <?php else: ?>
+          Mostrando <strong><?= $primero ?>–<?= $ultimo ?></strong> de
+          <strong><?= $total ?> <?= $total === 1 ? 'libro' : 'libros' ?></strong>
           <?php endif; ?>
         </p>
 
@@ -176,7 +218,7 @@ $slug = static fn (string $valor): string => preg_replace('/[^a-z0-9]+/', '-', s
              cambian cómo se ve este mismo listado. Sin el campo oculto de «pagina», cambiar
              cualquiera de las dos vuelve a la primera página, que es lo que se espera: con otra
              cantidad por página, la página 3 de antes ya no es la misma. -->
-        <form action="/catalogo" method="get">
+        <form action="/catalogo" method="get" id="catalogo-vista">
           <label for="ordenar-libros">Ordenar por:</label>
           <select id="ordenar-libros" name="orden">
             <?php foreach ($ordenes as $valor => $etiqueta): ?>
@@ -198,29 +240,14 @@ $slug = static fn (string $valor): string => preg_replace('/[^a-z0-9]+/', '-', s
         </form>
 
         <?php if ($libros === []): ?>
-        <p>
+        <p data-sin-resultados>
           No encontramos libros con esa búsqueda.
           <a href="/catalogo">Ver todo el catálogo</a>.
         </p>
         <?php else: ?>
         <ul>
           <?php foreach ($libros as $libro): ?>
-          <li>
-            <article>
-              <figure>
-                <img src="/img/<?= htmlspecialchars($libro['imagen']) ?>" alt="Portada del libro <?= htmlspecialchars($libro['titulo']) ?>">
-                <figcaption><?= htmlspecialchars($libro['formato']) ?></figcaption>
-              </figure>
-              <header>
-                <p><small>GÉNERO: <?= htmlspecialchars($libro['genero']) ?></small></p>
-                <h4><a href="/libros/<?= $libro['id'] ?>"><?= htmlspecialchars($libro['titulo']) ?></a></h4>
-                <p><strong>Autor:</strong> <?= htmlspecialchars($libro['autor']) ?></p>
-              </header>
-              <p><small><strong>Descripción:</strong> <?= htmlspecialchars($libro['resumen']) ?></small></p>
-              <p><strong>Precio:</strong> <data value="<?= $libro['precio'] ?>"><?= $pesos($libro['precio']) ?></data></p>
-              <p><a href="/libros/<?= $libro['id'] ?>">Ver detalles &rarr;</a></p>
-            </article>
-          </li>
+          <?php $tarjeta($libro); ?>
           <?php endforeach; ?>
         </ul>
 
@@ -251,7 +278,7 @@ $slug = static fn (string $valor): string => preg_replace('/[^a-z0-9]+/', '-', s
         <p>
           <!-- La otra representación del mismo listado: se descarga con la búsqueda y los
                filtros puestos, pero sin paginar. -->
-          <a href="<?= $url('/catalogo/csv') ?>" download>Descargar estos resultados en CSV</a>
+          <a href="<?= $url('/catalogo/csv') ?>" id="catalogo-csv" download>Descargar estos resultados en CSV</a>
         </p>
       </section>
     </section>

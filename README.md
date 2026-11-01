@@ -58,7 +58,7 @@ repositorio: no hace falta crear ni dar permisos a nada.
 Para verificar que las rutas responden lo que corresponde (con el servidor andando):
 
 ```bash
-for r in / /sobre-nosotros /catalogo "/catalogo?q=baez" /catalogo/csv /libros/1 /reserva \
+for r in / /sobre-nosotros /catalogo "/catalogo?q=baez" /catalogo/csv /catalogo/json /libros/1 /reserva \
          /libros/9999 /xyz; do
   printf '%-22s %s\n' "$r" "$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:8080$r")"
 done
@@ -313,8 +313,8 @@ cambian:
 | Buscador | `q` | Texto libre sobre título, autor, género e ISBN. Sin tildes y sin distinguir mayúsculas (`ficcion` encuentra «Ficción»); el ISBN se encuentra con guiones o sin ellos |
 | Categorías | `genero` | Un género exacto, con la cantidad de libros al lado |
 | Formato | `formato` | Tapa dura, tapa blanda o digital |
-| Rango de precio | `precio` | Los tres tramos del wireframe |
-| Ordenar por | `orden` | `recomendados` (el orden del catálogo), `precio-asc`, `precio-desc` y `titulo-az` |
+| Rango de precio | `precio_desde`, `precio_hasta` | Montos en pesos, inclusivos. Vacío es «sin límite»; si el mínimo supera al máximo, el filtro no se aplica |
+| Ordenar por | `orden` | `recomendados` (el orden del catálogo), y `titulo`, `autor` o `precio` con `-asc` o `-desc` |
 | Libros por página | `por_pagina` | `4` (la de por defecto), `8`, `12` o `24`. Cualquier otro valor cae en la de por defecto |
 | Paginado | `pagina` | Desde 1. Cuántas hay depende de `por_pagina` |
 
