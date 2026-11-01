@@ -110,6 +110,13 @@ export class ZonaArrastre {
       this.avisar(avisoServidor.textContent.trim());
       avisoServidor.hidden = true;
     }
+
+    // Si el servidor devolvió un error para la tapa, se marca la zona como inválida.
+    const errorExistente = document.getElementById(this.idDeError());
+    if (errorExistente && !errorExistente.hidden && errorExistente.textContent.trim()) {
+      this.zona.setAttribute('aria-invalid', 'true');
+      this.describir(errorExistente.id, true);
+    }
   }
 
   // ---- Eventos y Comportamiento ------------------------------------------------------------

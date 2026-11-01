@@ -39,17 +39,19 @@ class LibroNuevoController extends Controller
         $tapaEnviada = is_array($tapa) && ($tapa['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
 
         try {
-            $libro = LibroNuevo::desdeFormulario($campos, $this->libros());
+            $libro = LibroNuevo::desdeFormulario(
+                $campos,
+                $this->libros(),
+                $tapa,
+                fn (array $tapaValida, string $mime): string => $this->guardarTapa($tapaValida, $mime)
+            );
         } catch (LibroNuevoInvalido $error) {
             return $this->mostrar($campos, $error->errores, 422, $tapaEnviada);
         }
 
         $this->logger->info('Libro nuevo validado: ISBN {isbn}', ['isbn' => $libro->isbn]);
-        if ($tapaEnviada) {
-            $this->logger->info('Tapa recibida: {name} ({size} bytes)', [
-                'name' => (string) ($tapa['name'] ?? ''),
-                'size' => (int) ($tapa['size'] ?? 0),
-            ]);
+        if ($libro->imagen !== null) {
+            $this->logger->info('Tapa guardada: {archivo}', ['archivo' => $libro->imagen]);
         }
 
         // La respuesta es directa, sin redirigir a otra página como hace la reserva: el libro no
@@ -64,6 +66,34 @@ class LibroNuevoController extends Controller
             'libro' => $libro,
             'tapa' => $tapaEnviada ? $tapa : null,
         ]);
+    }
+
+    /**
+     * Guarda la imagen de la tapa en frontend/img/tapas/ con un nombre aleatorio seguro.
+     *
+     * @param array<string, mixed> $tapa
+     */
+    private function guardarTapa(array $tapa, string $mime): string
+    {
+        $extension = LibroNuevo::MIMES_TAPA[$mime] ?? 'jpg';
+        $nombreGenerado = bin2hex(random_bytes(8)) . '.' . $extension;
+        $directorio = dirname(__DIR__, 3) . '/frontend/img/tapas';
+
+        if (!is_dir($directorio)) {
+            mkdir($directorio, 0755, true);
+        }
+
+        $destino = $directorio . '/' . $nombreGenerado;
+        $tmpName = (string) ($tapa['tmp_name'] ?? '');
+
+        // move_uploaded_file para peticiones HTTP reales; rename/copy como soporte para CLI o pruebas.
+        if (!@move_uploaded_file($tmpName, $destino)) {
+            if (!@rename($tmpName, $destino)) {
+                copy($tmpName, $destino);
+            }
+        }
+
+        return $nombreGenerado;
     }
 
     /**

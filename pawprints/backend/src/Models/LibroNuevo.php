@@ -27,6 +27,15 @@ final class LibroNuevo
      */
     public const PATRON_ISBN = '(?:97[89])(?:[\s\-]?\d){10}';
 
+    public const MAX_TAMANO_TAPA = 2 * 1024 * 1024; // 2 MB (upload_max_filesize por defecto de PHP)
+
+    /** @var array<string, string> tipo MIME real => extensión */
+    public const MIMES_TAPA = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+    ];
+
     /**
      * Los mensajes de error de cada campo. Son los mismos en el servidor y en el navegador: la vista
      * los pasa a los atributos data-error-* de cada control, de donde los toma validador.js. Así el
@@ -78,6 +87,11 @@ final class LibroNuevo
             'largo' => 'La descripción puede tener hasta 2000 caracteres.',
             'caracteres' => 'La descripción tiene caracteres que no se pueden usar.',
         ],
+        'tapa' => [
+            'tipo' => 'La tapa debe ser una imagen en formato JPG, PNG o WebP.',
+            'tamano' => 'La imagen no puede pesar más de 2 MB.',
+            'subida' => 'No se pudo subir la imagen de la tapa. Probá de nuevo.',
+        ],
     ];
 
     private function __construct(
@@ -90,20 +104,28 @@ final class LibroNuevo
         public readonly int $stock,
         public readonly string $resumen,
         public readonly string $descripcion,
+        public readonly ?string $imagen = null,
     ) {
     }
 
     /**
-     * Valida lo que llegó del formulario. El navegador ya valida con validador.js, pero eso se
-     * saltea desactivando el JavaScript o mandando el POST a mano: acá se vuelve a validar todo,
-     * con las mismas reglas.
+     * Valida lo que llegó del formulario. El navegador ya valida con validador.js y zona-arrastre.js,
+     * pero eso se saltea desactivando el JavaScript o mandando el POST a mano: acá se vuelve a
+     * validar todo, con las mismas reglas.
      *
      * @param array<string, string> $campos titulo, autor, genero, formato, isbn, precio, stock,
      *                                      resumen y descripcion
+     * @param array<string, mixed>|null $tapa el archivo de $_FILES['tapa'] si se envió
+     * @param (callable(array<string, mixed>, string): string)|null $guardarTapa función para guardar la tapa y obtener su nombre
      *
      * @throws LibroNuevoInvalido con un mensaje por cada campo que no pasó
      */
-    public static function desdeFormulario(array $campos, LibroRepository $catalogo): self
+    public static function desdeFormulario(
+        array $campos,
+        LibroRepository $catalogo,
+        ?array $tapa = null,
+        ?callable $guardarTapa = null,
+    ): self
     {
         $errores = [];
         $error = static function (string $campo, string $tipo) use (&$errores): void {
@@ -162,11 +184,78 @@ final class LibroNuevo
         $descripcion = self::parrafos($campos['descripcion'] ?? '');
         self::texto($descripcion, 'descripcion', self::MAX_DESCRIPCION, false, $error);
 
+        $mimeTapa = self::validarTapa($tapa, $error);
+
         if ($errores !== []) {
             throw new LibroNuevoInvalido($errores);
         }
 
-        return new self($titulo, $autor, $genero, $formato, $isbn, $precio, $stock, $resumen, $descripcion);
+        $imagen = null;
+        if ($mimeTapa !== null && $tapa !== null && $guardarTapa !== null) {
+            $imagen = $guardarTapa($tapa, $mimeTapa);
+        }
+
+        return new self($titulo, $autor, $genero, $formato, $isbn, $precio, $stock, $resumen, $descripcion, $imagen);
+    }
+
+    /**
+     * Valida el archivo de tapa subido ($_FILES['tapa']).
+     * Controla UPLOAD_ERR_OK, el tamaño máximo y el tipo MIME real mediante finfo_file,
+     * sin confiar en el tipo que manda el navegador ni en la extensión.
+     *
+     * @param array<string, mixed>|null $tapa
+     * @param callable(string, string): void $error
+     * @return string|null el tipo MIME real validado, o null si no se envió archivo o hubo error
+     */
+    public static function validarTapa(?array $tapa, callable $error): ?string
+    {
+        if ($tapa === null) {
+            return null;
+        }
+
+        $codigoError = $tapa['error'] ?? UPLOAD_ERR_NO_FILE;
+        if ($codigoError === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+
+        if ($codigoError === UPLOAD_ERR_INI_SIZE || $codigoError === UPLOAD_ERR_FORM_SIZE) {
+            $error('tapa', 'tamano');
+
+            return null;
+        }
+
+        if ($codigoError !== UPLOAD_ERR_OK) {
+            $error('tapa', 'subida');
+
+            return null;
+        }
+
+        $tamano = (int) ($tapa['size'] ?? 0);
+        if ($tamano > self::MAX_TAMANO_TAPA) {
+            $error('tapa', 'tamano');
+
+            return null;
+        }
+
+        $tmpName = (string) ($tapa['tmp_name'] ?? '');
+        if ($tmpName === '' || !is_file($tmpName)) {
+            $error('tapa', 'subida');
+
+            return null;
+        }
+
+        // Sin finfo_close: desde PHP 8.1 el objeto finfo se libera solo, y en 8.5 la función está
+        // deprecada; el ErrorHandler convierte ese aviso en excepción y la subida daba un 500.
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = $finfo !== false ? finfo_file($finfo, $tmpName) : false;
+
+        if (!is_string($mime) || !array_key_exists($mime, self::MIMES_TAPA)) {
+            $error('tapa', 'tipo');
+
+            return null;
+        }
+
+        return $mime;
     }
 
     /**
