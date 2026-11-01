@@ -1,0 +1,288 @@
+/* ================================================================
+   PAWPrints — Librería
+   libro-nuevo.css: carga de libros nuevos (TP4, consigna 2)
+   ================================================================
+   No hay wireframe de esta página: sigue el armado del formulario de
+   reserva (reserva.css) en una sola tarjeta, sin la columna del resumen.
+   ================================================================ */
+
+.page-libro-nuevo,
+.page-libro-nuevo-confirmacion {
+  background: var(--cream);
+}
+
+.page-libro-nuevo main,
+.page-libro-nuevo-confirmacion main {
+  max-width: calc(48rem + 2 * var(--gutter));
+  margin-inline: auto;
+  padding: var(--sp-16) var(--gutter);
+}
+
+.page-libro-nuevo main > section,
+.page-libro-nuevo-confirmacion main > section {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-10);
+}
+
+.page-libro-nuevo h1,
+.page-libro-nuevo-confirmacion h1 {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  margin-bottom: var(--sp-3);
+}
+
+.page-libro-nuevo main > section > p,
+.page-libro-nuevo-confirmacion main > section > p {
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: var(--sp-6);
+}
+
+/* El asterisco de campo obligatorio, sin el subrayado de <abbr title>. */
+.page-libro-nuevo abbr[title] {
+  color: var(--v700);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: help;
+}
+
+/* ================================================================
+   1. FORMULARIO
+   ================================================================ */
+.page-libro-nuevo form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+.page-libro-nuevo fieldset {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+/* Cada grupo lleva su título, que separa los datos del libro del precio
+   y del texto del catálogo. */
+.page-libro-nuevo legend {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--v800);
+  margin-bottom: var(--sp-4);
+}
+
+.page-libro-nuevo .campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+/* Dos campos cortos comparten fila: género y formato, precio y stock. */
+.page-libro-nuevo .fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-5);
+}
+
+.page-libro-nuevo label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.page-libro-nuevo input,
+.page-libro-nuevo select,
+.page-libro-nuevo textarea {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--dark);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 0.7rem var(--sp-4);
+  transition: border-color var(--ease), box-shadow var(--ease);
+}
+
+.page-libro-nuevo ::placeholder {
+  color: var(--muted);
+}
+
+.page-libro-nuevo input:focus,
+.page-libro-nuevo select:focus,
+.page-libro-nuevo textarea:focus {
+  outline: none;
+  border-color: var(--v700);
+  box-shadow: 0 0 0 3px rgba(92, 6, 140, 0.15);
+}
+
+.page-libro-nuevo input:focus-visible,
+.page-libro-nuevo select:focus-visible,
+.page-libro-nuevo textarea:focus-visible {
+  outline: 3px solid var(--v500);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.page-libro-nuevo textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* Flecha propia del desplegable, como en la reserva. */
+.page-libro-nuevo select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: var(--sp-10);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%235C068C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--sp-4) center;
+  background-size: 12px 8px;
+}
+
+.page-libro-nuevo small {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+/* ================================================================
+   2. ERRORES
+   Los marca aria-invalid, que ponen tanto el servidor como validador.js:
+   el estilo es el mismo los detecte quien los detecte. Sin JavaScript,
+   :user-invalid pinta lo que rechaza la validación del navegador.
+   El error no se marca sólo con color: siempre va el mensaje, con un
+   ícono adelante.
+   ================================================================ */
+.page-libro-nuevo [aria-invalid="true"],
+.page-libro-nuevo form:not([novalidate]) :user-invalid {
+  border-color: #C0392B;
+  background-color: #FFFBFA;
+}
+
+.page-libro-nuevo .error-campo {
+  display: flex;
+  gap: var(--sp-2);
+  font-size: var(--text-sm);
+  color: #A93226;
+}
+
+.page-libro-nuevo .error-campo::before {
+  content: "⚠";
+  flex: none;
+}
+
+.page-libro-nuevo .error-campo[hidden] {
+  display: none;
+}
+
+.page-libro-nuevo .resumen-errores {
+  background: #FDF0EE;
+  border: 1px solid #C0392B;
+  border-radius: var(--r-md);
+  padding: var(--sp-4) var(--sp-5);
+  margin-bottom: var(--sp-6);
+  font-size: var(--text-sm);
+  color: var(--dark);
+}
+
+.page-libro-nuevo .resumen-errores ul {
+  margin-top: var(--sp-2);
+  padding-left: var(--sp-5);
+  list-style: disc;
+}
+
+.page-libro-nuevo .resumen-errores a {
+  color: #A93226;
+}
+
+/* ================================================================
+   3. BOTÓN DE ENVÍO
+   ================================================================ */
+.page-libro-nuevo form button[type="submit"] {
+  width: 100%;
+  background: var(--v700);
+  border-color: var(--v700);
+  color: var(--white);
+  font-size: var(--text-base);
+  padding: 0.9rem 1.4rem;
+}
+
+.page-libro-nuevo form button[type="submit"]:hover {
+  background: var(--v600);
+  border-color: var(--v600);
+  box-shadow: var(--sh-md);
+}
+
+/* ================================================================
+   4. CONFIRMACIÓN: la ficha de lo que se cargó
+   ================================================================ */
+.page-libro-nuevo-confirmacion dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--sp-3) var(--sp-6);
+  padding: var(--sp-6);
+  background: var(--v50);
+  border: 1px solid var(--border-v);
+  border-radius: var(--r-lg);
+}
+
+.page-libro-nuevo-confirmacion dt {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--v800);
+}
+
+.page-libro-nuevo-confirmacion dd {
+  line-height: 1.6;
+}
+
+.page-libro-nuevo-confirmacion main ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-4);
+  margin-top: var(--sp-6);
+}
+
+.page-libro-nuevo-confirmacion main a {
+  color: var(--v700);
+  font-weight: 600;
+}
+
+/* ================================================================
+   5. CELULAR
+   ================================================================ */
+@media (max-width: 768px) {
+  .page-libro-nuevo main,
+  .page-libro-nuevo-confirmacion main {
+    padding: var(--sp-10) var(--gutter);
+  }
+
+  .page-libro-nuevo main > section,
+  .page-libro-nuevo-confirmacion main > section {
+    padding: var(--sp-6);
+  }
+
+  .page-libro-nuevo h1,
+  .page-libro-nuevo-confirmacion h1 {
+    font-size: var(--text-2xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .page-libro-nuevo .fila {
+    grid-template-columns: 1fr;
+  }
+
+  .page-libro-nuevo-confirmacion dl {
+    grid-template-columns: 1fr;
+    gap: var(--sp-1);
+  }
+
+  .page-libro-nuevo-confirmacion dd {
+    margin-bottom: var(--sp-3);
+  }
+}

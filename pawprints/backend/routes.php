@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PawPrints\Controllers\CatalogoController;
 use PawPrints\Controllers\HomeController;
+use PawPrints\Controllers\LibroNuevoController;
 use PawPrints\Controllers\ReservaController;
 use PawPrints\Controllers\SobreNosotrosController;
 use PawPrints\Core\Router;
@@ -22,6 +23,11 @@ return static function (Router $router): void {
     $router->get('/catalogo', [CatalogoController::class, 'index']);
     $router->get('/catalogo/csv', [CatalogoController::class, 'csv']);
     $router->get('/catalogo/json', [CatalogoController::class, 'json']);
+
+    // La carga de libros nuevos del TP4. Va antes que /libros/{id}: el router se queda con la
+    // primera ruta que coincide, y {id} también atraparía «nuevo».
+    $router->get('/libros/nuevo', [LibroNuevoController::class, 'formulario']);
+    $router->post('/libros/nuevo', [LibroNuevoController::class, 'cargar']);
     $router->get('/libros/{id}', [CatalogoController::class, 'libro']);
 
     // El mismo /reserva muestra el formulario (GET) y lo recibe (POST).

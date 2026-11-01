@@ -60,6 +60,24 @@ final class LibroRepository extends JsonRepository implements CatalogoDeLibros
     }
 
     /**
+     * El libro con ese ISBN, comparando sólo los números: «978-987-1234-56-1» y «9789871234561»
+     * son el mismo. Lo usa la carga de libros nuevos para no repetir uno que ya está.
+     *
+     * @return Libro|null
+     */
+    public function porIsbn(string $isbn): ?array
+    {
+        $buscado = preg_replace('/\D/', '', $isbn);
+        foreach ($this->todos() as $libro) {
+            if (preg_replace('/\D/', '', $libro['isbn']) === $buscado) {
+                return $libro;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Los libros que coinciden con la búsqueda y los filtros, ya ordenados. El paginado se aplica
      * después, sobre este resultado, así el total de resultados se puede contar.
      *
