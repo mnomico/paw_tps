@@ -14,7 +14,8 @@ use PawPrints\Models\LibroRepository;
 
 /**
  * El catálogo: el listado con búsqueda, filtros, orden y paginado; la ficha de cada libro, con el
- * botón que lleva a la reserva; y el mismo listado en CSV.
+ * botón que lleva a la reserva; el mismo listado en CSV; y el catálogo entero en JSON, para el JS
+ * que lo filtra en el navegador.
  * Responsabilidad: Agustina (Punto 4).
  */
 class CatalogoController extends Controller
@@ -24,7 +25,9 @@ class CatalogoController extends Controller
      * libros entran en una página— y por eso viaja en los enlaces del paginado y del CSV y en los
      * campos ocultos de cada formulario. El número de página no está acá: se agrega aparte.
      */
-    private const FILTROS = ['q', 'genero', 'formato', 'precio_desde', 'precio_hasta', 'orden', 'por_pagina'];
+    private const FILTROS = [
+        'q', 'genero', 'formato', 'precio_desde', 'precio_hasta', 'orden', 'por_pagina',
+    ];
 
     /**
      * Los órdenes que ofrece el desplegable, en el orden en que se muestran. La clave es el valor

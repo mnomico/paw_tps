@@ -20,6 +20,14 @@
 /** Los parámetros de la vista actual, en el orden en que los escribe el servidor. */
 const FILTROS = ['q', 'genero', 'formato', 'precio_desde', 'precio_hasta', 'orden', 'por_pagina'];
 
+/** Las claves de CatalogoController::ORDENES; otro valor cae en el orden por defecto. */
+const ORDENES = [
+  'recomendados',
+  'titulo-asc', 'titulo-desc',
+  'autor-asc', 'autor-desc',
+  'precio-asc', 'precio-desc',
+];
+
 /** Los mismos de LibroRepository::CANTIDADES; el primero es el de por defecto. */
 const CANTIDADES = [4, 8, 12, 24];
 
@@ -113,7 +121,7 @@ export function estadoDesde(query) {
 
   const porPagina = Number(estado.por_pagina);
   estado.por_pagina = CANTIDADES.includes(porPagina) ? porPagina : CANTIDADES[0];
-  if (estado.orden === '') {
+  if (!ORDENES.includes(estado.orden)) {
     estado.orden = ORDEN_POR_DEFECTO;
   }
   const pagina = Number(params.get('pagina') ?? '1');
@@ -235,7 +243,9 @@ export class FiltrosCatalogo {
     const porPagina = this.vista.elements.namedItem('por_pagina');
 
     orden.addEventListener('change', () => this.cambiar({ orden: orden.value }));
-    porPagina.addEventListener('change', () => this.cambiar({ por_pagina: Number(porPagina.value) }));
+    porPagina.addEventListener('change', () => {
+      this.cambiar({ por_pagina: Number(porPagina.value) });
+    });
     this.vista.addEventListener('submit', (evento) => evento.preventDefault());
     this.ocultarBoton(this.vista);
 
@@ -243,7 +253,8 @@ export class FiltrosCatalogo {
     // común cambia de página acá.
     this.resultados.addEventListener('click', (evento) => {
       const enlace = evento.target.closest('nav[aria-label="Paginado del catálogo"] a');
-      if (!enlace || evento.button !== 0 || evento.metaKey || evento.ctrlKey || evento.shiftKey || evento.altKey) {
+      const conTecla = evento.metaKey || evento.ctrlKey || evento.shiftKey || evento.altKey;
+      if (!enlace || evento.button !== 0 || conTecla) {
         return;
       }
       evento.preventDefault();
@@ -297,7 +308,10 @@ export class FiltrosCatalogo {
     }
 
     const aplicar = conEspera(() => {
-      this.cambiar({ precio_desde: this.desde.value.trim(), precio_hasta: this.hasta.value.trim() });
+      this.cambiar({
+        precio_desde: this.desde.value.trim(),
+        precio_hasta: this.hasta.value.trim(),
+      });
     }, ESPERA);
     this.desde.addEventListener('input', aplicar);
     this.hasta.addEventListener('input', aplicar);
@@ -358,16 +372,24 @@ export class FiltrosCatalogo {
     this.actualizarUrl();
   }
 
-  /** «Mostrando X–Y de Z libros», igual que el servidor. */
+  /**
+   * «Mostrando X–Y de Z libros», igual que el servidor. Si el texto no cambió no se toca: el
+   * resumen es una región aria-live y reescribirlo igual lo volvería a anunciar.
+   */
   dibujarResumen(total, primero, ultimo) {
-    const fuerte = (texto) => Object.assign(document.createElement('strong'), { textContent: texto });
     const libros = `${total} ${total === 1 ? 'libro' : 'libros'}`;
+    const partes = total === 0
+      ? ['Mostrando ', [libros]]
+      : ['Mostrando ', [`${primero}–${ultimo}`], ' de ', [libros]];
 
-    if (total === 0) {
-      this.resumen.replaceChildren('Mostrando ', fuerte(libros));
-    } else {
-      this.resumen.replaceChildren('Mostrando ', fuerte(`${primero}–${ultimo}`), ' de ', fuerte(libros));
+    const texto = partes.flat().join('');
+    if (this.resumen.textContent.replace(/\s+/g, ' ').trim() === texto) {
+      return;
     }
+    // Los tramos entre corchetes van en <strong>.
+    this.resumen.replaceChildren(...partes.map((parte) => (Array.isArray(parte)
+      ? Object.assign(document.createElement('strong'), { textContent: parte[0] })
+      : parte)));
   }
 
   /** Reemplaza las tarjetas, el paginado o el aviso de «no encontramos» por los de la vista. */

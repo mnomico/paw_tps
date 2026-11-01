@@ -58,7 +58,7 @@ repositorio: no hace falta crear ni dar permisos a nada.
 Para verificar que las rutas responden lo que corresponde (con el servidor andando):
 
 ```bash
-for r in / /sobre-nosotros /catalogo "/catalogo?q=baez" /catalogo/csv /libros/1 /reserva \
+for r in / /sobre-nosotros /catalogo "/catalogo?q=baez" /catalogo/csv /catalogo/json /libros/1 /reserva \
          /libros/9999 /xyz; do
   printf '%-22s %s\n' "$r" "$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:8080$r")"
 done

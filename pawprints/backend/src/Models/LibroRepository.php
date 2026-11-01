@@ -114,7 +114,11 @@ final class LibroRepository extends JsonRepository implements CatalogoDeLibros
     /** Un monto en pesos de la query, o null si está vacío o no es un entero no negativo. */
     private static function monto(?string $valor): ?int
     {
-        $monto = filter_var(trim((string) $valor), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+        $monto = filter_var(
+            trim((string) $valor),
+            FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => 0]],
+        );
 
         return $monto === false ? null : $monto;
     }
@@ -138,7 +142,8 @@ final class LibroRepository extends JsonRepository implements CatalogoDeLibros
         [$campo, $sentido] = $partes;
 
         $clave = match ($campo) {
-            'titulo', 'autor' => static fn (array $libro): string => self::normalizar($libro[$campo]),
+            'titulo', 'autor' => static fn (array $libro): string =>
+                self::normalizar($libro[$campo]),
             'precio' => static fn (array $libro): int => $libro['precio'],
             default => null,
         };
