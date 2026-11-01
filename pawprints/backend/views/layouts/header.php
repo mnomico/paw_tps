@@ -33,6 +33,7 @@ $assetPath = '/';
   <link rel="stylesheet" href="<?= $assetPath ?>css/print.css" media="print">
   <?php /* Los módulos se ejecutan diferidos: pueden ir en el <head> sin frenar el dibujo de la
            página, y cuando corren el HTML ya está entero. */ ?>
+  <script type="module" src="<?= $assetPath ?>js/componentes/historial-busquedas.js"></script>
   <?php foreach ($extraJs as $jsFile): ?>
     <script type="module" src="<?= $assetPath ?>js/<?= htmlspecialchars($jsFile) ?>"></script>
   <?php endforeach; ?>
