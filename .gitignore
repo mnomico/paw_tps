@@ -10,3 +10,7 @@ pawprints/backend/logs/correos/
 # Las tapas que se cargan desde el formulario (se versiona sólo el .gitkeep).
 pawprints/frontend/img/tapas/*
 !pawprints/frontend/img/tapas/.gitkeep
+
+# Contexto y notas locales de desarrollo (no se versionan)
+contexto/
+.context/
