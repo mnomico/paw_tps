@@ -25,6 +25,9 @@ $assetPath = '/';
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><?= htmlspecialchars($title) ?></title>
   <meta name="description" content="<?= htmlspecialchars($description) ?>">
+  <?php /* Sin un ícono declarado, el navegador pide /favicon.ico por su cuenta, que no existe, y
+           la consola muestra un 404 en cada página. */ ?>
+  <link rel="icon" href="<?= $assetPath ?>img/pawprints-icono.svg" type="image/svg+xml">
   <link rel="stylesheet" href="<?= $assetPath ?>css/base.css">
   <link rel="stylesheet" href="<?= $assetPath ?>css/componentes.css">
   <?php foreach ($extraCss as $cssFile): ?>
