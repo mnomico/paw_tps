@@ -103,6 +103,13 @@ export class ZonaArrastre {
 
     // Se inserta después del input en el contenedor.
     this.input.after(this.zona);
+
+    // Si el servidor devolvió un aviso de reingreso por errores en otros campos, se muestra en el componente.
+    const avisoServidor = this.contenedor.querySelector('.aviso-reingreso-tapa');
+    if (avisoServidor && avisoServidor.textContent.trim()) {
+      this.avisar(avisoServidor.textContent.trim());
+      avisoServidor.hidden = true;
+    }
   }
 
   // ---- Eventos y Comportamiento ------------------------------------------------------------

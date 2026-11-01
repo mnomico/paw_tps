@@ -16,12 +16,14 @@ final class Request
     /**
      * @param array<string, mixed> $query
      * @param array<string, mixed> $body
+     * @param array<string, mixed> $files
      */
     public function __construct(
         private readonly string $method,
         private readonly string $path,
         private readonly array $query = [],
         private readonly array $body = [],
+        private readonly array $files = [],
     ) {
     }
 
@@ -34,6 +36,7 @@ final class Request
             self::normalize(rawurldecode(is_string($path) ? $path : '/')),
             $_GET,
             $_POST,
+            $_FILES,
         );
     }
 
@@ -69,6 +72,29 @@ final class Request
     public function input(string $key, ?string $default = null): ?string
     {
         return self::string($this->body, $key) ?? $default;
+    }
+
+    /**
+     * Un archivo subido ($_FILES): su array con 'name', 'type', 'tmp_name', 'error', 'size',
+     * o null si no se envió nada en ese campo.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function file(string $key): ?array
+    {
+        $file = $this->files[$key] ?? null;
+
+        return is_array($file) ? $file : null;
+    }
+
+    /**
+     * Todos los archivos subidos en la petición ($_FILES).
+     *
+     * @return array<string, mixed>
+     */
+    public function files(): array
+    {
+        return $this->files;
     }
 
     /** Un parámetro de la ruta: el {id} de «/libros/{id}». */

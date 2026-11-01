@@ -132,8 +132,15 @@ $opciones = static function (array $lista, string $elegida): string {
 
           <div class="campo campo-tapa" data-zona-arrastre>
             <label for="tapa">Tapa del libro</label>
-            <input type="file" id="tapa" name="tapa" accept="image/jpeg,image/png,image/webp" aria-describedby="ayuda-tapa">
+            <input type="file" id="tapa" name="tapa" accept="image/jpeg,image/png,image/webp" aria-describedby="ayuda-tapa<?= $errores !== [] ? ' aviso-tapa' : '' ?>">
             <small id="ayuda-tapa">Formatos: JPG, PNG o WebP. Hasta 2 MB.</small>
+            <?php if ($errores !== []): ?>
+            <p id="aviso-tapa" class="aviso-campo aviso-reingreso-tapa" role="status">
+              <?= !empty($tapaEnviada)
+                ? 'Tenés que volver a elegir la tapa: por seguridad el navegador no la conserva al volver con errores.'
+                : 'Si habías seleccionado una tapa, tenés que volver a elegirla: por seguridad el navegador no la conserva al volver con errores.' ?>
+            </p>
+            <?php endif; ?>
           </div>
         </fieldset>
 

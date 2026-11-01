@@ -247,6 +247,20 @@
   display: none;
 }
 
+.page-libro-nuevo .aviso-reingreso-tapa {
+  font-size: var(--text-xs);
+  color: #7D6608;
+  background-color: #FFF9E6;
+  border: 1px solid #F1C40F;
+  border-radius: var(--r-sm);
+  padding: var(--sp-2) var(--sp-3);
+  margin-top: var(--sp-2);
+}
+
+.page-libro-nuevo .aviso-reingreso-tapa[hidden] {
+  display: none;
+}
+
 /* Vista previa de la tapa */
 .zona-arrastre-preview {
   display: flex;
