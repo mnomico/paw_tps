@@ -244,11 +244,10 @@ final class LibroNuevo
             return null;
         }
 
+        // Sin finfo_close: desde PHP 8.1 el objeto finfo se libera solo, y en 8.5 la función está
+        // deprecada; el ErrorHandler convierte ese aviso en excepción y la subida daba un 500.
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime = $finfo !== false ? finfo_file($finfo, $tmpName) : false;
-        if ($finfo !== false) {
-            finfo_close($finfo);
-        }
 
         if (!is_string($mime) || !array_key_exists($mime, self::MIMES_TAPA)) {
             $error('tapa', 'tipo');
