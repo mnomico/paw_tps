@@ -25,6 +25,9 @@ const CANTIDADES = [4, 8, 12, 24];
 
 const ORDEN_POR_DEFECTO = 'recomendados';
 
+/** Cuánto se espera a que la persona deje de escribir antes de filtrar, en milisegundos. */
+const ESPERA = 300;
+
 /** Los valores que no hace falta escribir en la URL, porque son los de por defecto. */
 const POR_DEFECTO = { orden: ORDEN_POR_DEFECTO, por_pagina: String(CANTIDADES[0]), pagina: '1' };
 
@@ -136,6 +139,22 @@ export function queryDe(estado, { conPagina = true } = {}) {
   return query === '' ? '' : `?${query}`;
 }
 
+/**
+ * Una función que corre recién cuando dejan de llamarla durante `ms`; con .ya() corre al toque.
+ */
+function conEspera(funcion, ms) {
+  let temporizador;
+  const demorada = () => {
+    clearTimeout(temporizador);
+    temporizador = setTimeout(funcion, ms);
+  };
+  demorada.ya = () => {
+    clearTimeout(temporizador);
+    funcion();
+  };
+  return demorada;
+}
+
 export class FiltrosCatalogo {
   constructor(contenedor) {
     // Sin contenedor no se arma nada, y la página sigue andando con el servidor.
@@ -144,6 +163,8 @@ export class FiltrosCatalogo {
       return;
     }
     this.contenedor = contenedor;
+    this.busqueda = document.getElementById('catalogo-busqueda');
+    this.filtros = document.getElementById('catalogo-filtros');
     this.vista = document.getElementById('catalogo-vista');
     this.resultados = this.vista?.closest('section');
     this.titulo = document.getElementById('titulo-lista-libros');
@@ -151,7 +172,7 @@ export class FiltrosCatalogo {
     this.csv = document.getElementById('catalogo-csv');
     this.plantilla = document.getElementById('plantilla-libro');
 
-    if (!this.resultados || !this.resumen || !this.plantilla) {
+    if (!this.busqueda || !this.filtros || !this.resultados || !this.resumen || !this.plantilla) {
       console.warn('FiltrosCatalogo: falta parte del catálogo; no se arma nada.');
       return;
     }
@@ -178,6 +199,10 @@ export class FiltrosCatalogo {
 
   /** Engancha los controles: desde acá, ningún formulario del catálogo recarga la página. */
   tomarControl() {
+    this.controlarBusqueda();
+    this.controlarFiltros();
+    this.controlarPrecio();
+
     const orden = this.vista.elements.namedItem('orden');
     const porPagina = this.vista.elements.namedItem('por_pagina');
 
@@ -198,14 +223,84 @@ export class FiltrosCatalogo {
     });
   }
 
+  /** La búsqueda filtra mientras se escribe; Enter (o «Buscar») aplica sin esperar. */
+  controlarBusqueda() {
+    const campo = this.busqueda.elements.namedItem('q');
+    const buscar = conEspera(() => this.cambiar({ q: campo.value.trim() }), ESPERA);
+    campo.addEventListener('input', buscar);
+    this.busqueda.addEventListener('submit', (evento) => {
+      evento.preventDefault();
+      buscar.ya();
+    });
+  }
+
+  /** Género y formato se aplican apenas se elige otra opción. */
+  controlarFiltros() {
+    this.filtros.addEventListener('change', (evento) => {
+      const { name, value } = evento.target;
+      if (name === 'genero' || name === 'formato') {
+        this.cambiar({ [name]: value });
+      }
+    });
+    this.filtros.addEventListener('submit', (evento) => evento.preventDefault());
+    this.ocultarBoton(this.filtros);
+  }
+
+  /**
+   * «Desde» y «Hasta» filtran mientras se escribe. Si el mínimo supera al máximo, un aviso junto
+   * a los campos lo dice y el precio no filtra hasta que se corrija, igual que en el servidor.
+   */
+  controlarPrecio() {
+    this.desde = this.filtros.elements.namedItem('precio_desde');
+    this.hasta = this.filtros.elements.namedItem('precio_hasta');
+    if (!this.desde || !this.hasta) {
+      return;
+    }
+
+    this.avisoPrecio = Object.assign(document.createElement('p'), {
+      id: 'precio-aviso',
+      hidden: true,
+      textContent: '«Desde» no puede ser mayor que «Hasta»: el filtro de precio no se aplica.',
+    });
+    this.avisoPrecio.classList.add('rango-precio-aviso');
+    this.desde.closest('.rango-precio').after(this.avisoPrecio);
+    for (const campo of [this.desde, this.hasta]) {
+      campo.setAttribute('aria-describedby', this.avisoPrecio.id);
+    }
+
+    const aplicar = conEspera(() => {
+      this.cambiar({ precio_desde: this.desde.value.trim(), precio_hasta: this.hasta.value.trim() });
+    }, ESPERA);
+    this.desde.addEventListener('input', aplicar);
+    this.hasta.addEventListener('input', aplicar);
+  }
+
+  /** Muestra u oculta el aviso del rango según la vista actual. */
+  validarPrecio() {
+    if (!this.avisoPrecio) {
+      return;
+    }
+    const invalido = rangoDePrecio(this.estado) === null;
+    this.avisoPrecio.hidden = !invalido;
+    for (const campo of [this.desde, this.hasta]) {
+      campo.toggleAttribute('aria-invalid', invalido);
+    }
+  }
+
   ocultarBoton(formulario) {
     for (const boton of formulario.querySelectorAll('button[type="submit"]')) {
       boton.hidden = true;
     }
   }
 
-  /** Cambiar cualquier parte de la vista vuelve a la página 1: la de antes ya no es la misma. */
+  /**
+   * Cambiar cualquier parte de la vista vuelve a la página 1: la de antes ya no es la misma. Si
+   * nada cambió de verdad (un espacio al final de la búsqueda, por ejemplo), no se toca nada.
+   */
   cambiar(cambios) {
+    if (Object.entries(cambios).every(([nombre, valor]) => this.estado[nombre] === valor)) {
+      return;
+    }
     Object.assign(this.estado, cambios, { pagina: 1 });
     this.dibujar();
   }
@@ -229,6 +324,7 @@ export class FiltrosCatalogo {
     const inicio = (this.estado.pagina - 1) * porPagina;
     const pagina = encontrados.slice(inicio, inicio + porPagina);
 
+    this.validarPrecio();
     this.dibujarResumen(total, inicio + 1, inicio + pagina.length);
     this.dibujarListado(pagina, paginas);
     this.actualizarUrl();

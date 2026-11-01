@@ -276,6 +276,18 @@
   box-shadow: 0 0 0 3px rgba(92, 6, 140, 0.15);
 }
 
+/* Aviso del JS cuando «Desde» supera a «Hasta» */
+.page-catalogo aside .rango-precio-aviso {
+  margin-top: var(--sp-2);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: #b42318; /* Rojo de error, con contraste suficiente sobre blanco */
+}
+
+.page-catalogo aside .rango-precio input[aria-invalid] {
+  border-color: #b42318;
+}
+
 /* Botón "Aplicar Filtros" */
 .page-catalogo aside button[type="submit"] {
   width: 100%;
