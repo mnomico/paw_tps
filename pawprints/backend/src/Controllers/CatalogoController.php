@@ -24,7 +24,7 @@ class CatalogoController extends Controller
      * libros entran en una página— y por eso viaja en los enlaces del paginado y del CSV y en los
      * campos ocultos de cada formulario. El número de página no está acá: se agrega aparte.
      */
-    private const FILTROS = ['q', 'genero', 'formato', 'precio', 'orden', 'por_pagina'];
+    private const FILTROS = ['q', 'genero', 'formato', 'precio_desde', 'precio_hasta', 'orden', 'por_pagina'];
 
     /**
      * Los órdenes que ofrece el desplegable, en el orden en que se muestran. La clave es el valor
@@ -84,7 +84,6 @@ class CatalogoController extends Controller
             'filtros' => $filtros,
             'generos' => $this->libros()->generos(),
             'formatos' => $this->libros()->formatos(),
-            'rangos' => self::rangos(),
             'ordenes' => self::ORDENES,
         ]);
     }
@@ -191,28 +190,6 @@ class CatalogoController extends Controller
         return in_array($pedido, LibroRepository::CANTIDADES, true)
             ? $pedido
             : LibroRepository::POR_PAGINA;
-    }
-
-    /**
-     * Las etiquetas de los rangos de precio, armadas con los mismos números que usa el filtro,
-     * para que no se puedan desfasar de LibroRepository::RANGOS.
-     *
-     * @return array<string, string> valor de la query => etiqueta
-     */
-    private static function rangos(): array
-    {
-        $pesos = static fn (int $monto): string => '$' . number_format($monto, 0, ',', '.');
-
-        $etiquetas = [];
-        foreach (LibroRepository::RANGOS as $valor => [$desde, $hasta]) {
-            $etiquetas[$valor] = match (true) {
-                $desde === 0 && $hasta !== null => 'Menos de ' . $pesos($hasta + 1),
-                $hasta === null => 'Más de ' . $pesos($desde - 1),
-                default => $pesos($desde) . ' - ' . $pesos($hasta),
-            };
-        }
-
-        return $etiquetas;
     }
 
     /** Protected, para que una prueba pueda darle un catálogo de mentira. */

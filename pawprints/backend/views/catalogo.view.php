@@ -16,7 +16,6 @@
  * @var array<string, string> $filtros  los de la query, sin los vacíos
  * @var array<string, int>    $generos  género => cuántos libros
  * @var array<string, int>    $formatos formato => cuántos libros
- * @var array<string, string> $rangos   valor => etiqueta del rango de precio
  * @var array<string, string> $ordenes  valor => etiqueta del desplegable
  */
 require __DIR__ . '/layouts/header.php';
@@ -25,11 +24,12 @@ $pesos = static fn (int $monto): string => '$' . number_format($monto, 0, ',', '
 
 /**
  * Un enlace que conserva la vista actual y cambia sólo lo que se le pasa; un valor vacío saca
- * ese parámetro. Devuelve la URL ya escapada, lista para un href.
+ * ese parámetro. Devuelve la URL ya escapada, lista para un href. Los filtros van en el orden de
+ * FILTROS y la página al final, igual que la URL que arma el JS del catálogo.
  */
 $url = static function (string $base, array $cambios = []) use ($filtros): string {
     $query = array_filter(
-        $cambios + $filtros,
+        array_merge($filtros, $cambios),
         static fn ($valor): bool => $valor !== '' && $valor !== null,
     );
 
@@ -53,12 +53,13 @@ $ocultos = static function (array $excepto) use ($filtros): void {
 $buscado = $filtros['q'] ?? '';
 $generoActivo = $filtros['genero'] ?? '';
 $formatoActivo = $filtros['formato'] ?? '';
-$precioActivo = $filtros['precio'] ?? '';
+$precioDesde = $filtros['precio_desde'] ?? '';
+$precioHasta = $filtros['precio_hasta'] ?? '';
 $ordenActivo = $filtros['orden'] ?? '';
 
 // El tramo del listado que se ve en esta página, contado desde 1.
-$desde = ($pagina - 1) * $porPagina + 1;
-$hasta = $desde + count($libros) - 1;
+$primero = ($pagina - 1) * $porPagina + 1;
+$ultimo = $primero + count($libros) - 1;
 
 // Un identificador válido para el id de cada control, a partir del valor del filtro.
 $slug = static fn (string $valor): string => preg_replace('/[^a-z0-9]+/', '-', strtolower(
@@ -135,24 +136,26 @@ $slug = static fn (string $valor): string => preg_replace('/[^a-z0-9]+/', '-', s
             </ul>
           </fieldset>
 
+          <!-- El rango de precio son dos montos libres, en pesos e inclusivos. Un campo vacío es
+               «sin límite»; si el mínimo supera al máximo, el servidor no aplica el filtro. -->
           <fieldset>
             <legend>Rango de Precio</legend>
-            <ul>
-              <li>
-                <input type="radio" id="precio-todos" name="precio" value=""<?= $precioActivo === '' ? ' checked' : '' ?>>
-                <label for="precio-todos">Cualquier precio</label>
-              </li>
-              <?php foreach ($rangos as $valor => $etiqueta): ?>
-              <li>
-                <input type="radio" id="precio-<?= $slug($valor) ?>" name="precio" value="<?= htmlspecialchars($valor) ?>"<?= $precioActivo === $valor ? ' checked' : '' ?>>
-                <label for="precio-<?= $slug($valor) ?>"><?= htmlspecialchars($etiqueta) ?></label>
-              </li>
-              <?php endforeach; ?>
-            </ul>
+            <div class="rango-precio">
+              <p>
+                <label for="precio-desde">Desde ($)</label>
+                <input type="number" id="precio-desde" name="precio_desde" value="<?= htmlspecialchars($precioDesde) ?>"
+                       min="0" step="1" inputmode="numeric" placeholder="Sin mínimo">
+              </p>
+              <p>
+                <label for="precio-hasta">Hasta ($)</label>
+                <input type="number" id="precio-hasta" name="precio_hasta" value="<?= htmlspecialchars($precioHasta) ?>"
+                       min="0" step="1" inputmode="numeric" placeholder="Sin máximo">
+              </p>
+            </div>
           </fieldset>
 
           <button type="submit">Aplicar Filtros</button>
-          <?php $ocultos(['genero', 'formato', 'precio']); ?>
+          <?php $ocultos(['genero', 'formato', 'precio_desde', 'precio_hasta']); ?>
         </form>
       </aside>
 
@@ -169,7 +172,7 @@ $slug = static fn (string $valor): string => preg_replace('/[^a-z0-9]+/', '-', s
           <?php if ($total === 0): ?>
           Mostrando <strong>0 libros</strong>
           <?php else: ?>
-          Mostrando <strong><?= $desde ?>–<?= $hasta ?></strong> de
+          Mostrando <strong><?= $primero ?>–<?= $ultimo ?></strong> de
           <strong><?= $total ?> <?= $total === 1 ? 'libro' : 'libros' ?></strong>
           <?php endif; ?>
         </p>

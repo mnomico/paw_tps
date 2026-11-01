@@ -238,6 +238,44 @@
   font-weight: 600;
 }
 
+/* Rango de precio: «Desde» y «Hasta», uno al lado del otro */
+.page-catalogo aside .rango-precio {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+
+.page-catalogo aside .rango-precio p {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  min-width: 0; /* Deja que el campo se achique en lugar de desbordar la grilla */
+}
+
+.page-catalogo aside .rango-precio label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.page-catalogo aside .rango-precio input {
+  width: 100%;
+  min-height: 44px; /* Cómodo de tocar en el celular */
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--dark);
+  background: var(--white);
+}
+
+.page-catalogo aside .rango-precio input:focus {
+  outline: none;
+  border-color: var(--v700);
+  box-shadow: 0 0 0 3px rgba(92, 6, 140, 0.15);
+}
+
 /* Botón "Aplicar Filtros" */
 .page-catalogo aside button[type="submit"] {
   width: 100%;
