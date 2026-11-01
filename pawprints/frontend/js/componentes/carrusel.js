@@ -26,6 +26,9 @@ const INTERVALO = 5000;
 // Cuánto hay que arrastrar en horizontal para que cuente como swipe y no como un toque.
 const UMBRAL_SWIPE = 50;
 
+// Las pausas que salen de tener el mouse o el foco sobre el carrusel.
+const PAUSAS_POR_ESTAR_ENCIMA = ['puntero', 'foco'];
+
 export class Carrusel {
   constructor(contenedor) {
     // Un contenedor que no existe no rompe la página: el resto de los scripts sigue andando.
@@ -236,8 +239,15 @@ export class Carrusel {
   programar() {
     clearTimeout(this.temporizador);
     this.temporizador = null;
-    if (!this.cargado || this.pausas.size > 0) return;
+    if (!this.cargado || this.pausado) return;
     this.temporizador = setTimeout(() => this.siguiente(), this.intervalo);
+  }
+
+  // A pantalla completa el carrusel tapa todo y se entra con su propio botón: el mouse y el foco
+  // quedan siempre adentro, así que esas dos pausas lo frenarían para siempre y no cuentan.
+  get pausado() {
+    const ignoradas = this.enPantallaCompleta ? PAUSAS_POR_ESTAR_ENCIMA : [];
+    return [...this.pausas].some((motivo) => !ignoradas.includes(motivo));
   }
 
   pausar(motivo) {
@@ -291,6 +301,16 @@ export class Carrusel {
     const dentro = this.enPantallaCompleta;
     this.botonCompleta.setAttribute('aria-label', dentro ? 'Salir de la pantalla completa' : 'Ver a pantalla completa');
     this.botonCompleta.textContent = dentro ? '✕' : '⤢';
+
+    // Adentro no llegan pointerleave ni focusout; al salir se mira dónde quedaron de verdad.
+    if (!dentro) {
+      // En el celular :hover queda pegado después de tocar el botón: sólo cuenta si fue el mouse.
+      if (this.ultimoPuntero === 'mouse' && this.contenedor.matches(':hover')) this.pausas.add('puntero');
+      else this.pausas.delete('puntero');
+      if (this.contenedor.contains(document.activeElement)) this.pausas.add('foco');
+      else this.pausas.delete('foco');
+    }
+    this.programar();
   }
 
   // ---- Eventos -----------------------------------------------------------------------------
@@ -317,6 +337,7 @@ export class Carrusel {
     // Mientras alguien la está mirando o usando, la foto no cambia sola.
     c.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') this.pausar('puntero'); });
     c.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') this.reanudar('puntero'); });
+    c.addEventListener('pointerdown', (e) => { this.ultimoPuntero = e.pointerType; });
     c.addEventListener('focusin', () => this.pausar('foco'));
     c.addEventListener('focusout', (e) => { if (!c.contains(e.relatedTarget)) this.reanudar('foco'); });
     document.addEventListener('visibilitychange', () => {
