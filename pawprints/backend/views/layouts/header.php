@@ -8,12 +8,14 @@
  * @var string $activePage ('inicio' | 'catalogo' | 'sobre-nosotros')
  * @var string $pageClass
  * @var array $extraCss
+ * @var array $extraJs   módulos de frontend/js/ que necesita la página, por ejemplo 'paginas/inicio.js'
  */
 $title = $title ?? 'PAWPrints — Librería en Mercedes';
 $description = $description ?? 'Librería independiente en Mercedes, Buenos Aires.';
 $activePage = $activePage ?? 'inicio';
 $pageClass = $pageClass ?? 'page-inicio';
 $extraCss = $extraCss ?? [];
+$extraJs = $extraJs ?? [];
 $assetPath = '/';
 ?>
 <!DOCTYPE html>
@@ -29,6 +31,11 @@ $assetPath = '/';
     <link rel="stylesheet" href="<?= $assetPath ?>css/<?= htmlspecialchars($cssFile) ?>">
   <?php endforeach; ?>
   <link rel="stylesheet" href="<?= $assetPath ?>css/print.css" media="print">
+  <?php /* Los módulos se ejecutan diferidos: pueden ir en el <head> sin frenar el dibujo de la
+           página, y cuando corren el HTML ya está entero. */ ?>
+  <?php foreach ($extraJs as $jsFile): ?>
+    <script type="module" src="<?= $assetPath ?>js/<?= htmlspecialchars($jsFile) ?>"></script>
+  <?php endforeach; ?>
 </head>
 <body class="<?= htmlspecialchars($pageClass) ?>">
 
