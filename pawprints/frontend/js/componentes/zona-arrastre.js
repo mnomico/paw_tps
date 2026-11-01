@@ -6,10 +6,21 @@
  *
  * Uso: new ZonaArrastre(contenedor)
  *
- * El componente oculta visualmente el input nativo pero lo conserva en el DOM, sincronizando
- * el archivo seleccionado mediante DataTransfer para que viaje normalmente en el envío
- * del formulario (incluso sin JavaScript, ya que el HTML inicial cuenta con el input tradicional).
+ * Características:
+ * - Oculta visualmente el input nativo pero lo conserva en el DOM.
+ * - Validación de tipo MIME (JPG, PNG, WebP) y tamaño (hasta 2 MB) antes de aceptarlo.
+ * - Muestra errores en línea idénticos a validador.js con aria-invalid y aria-describedby.
+ * - Vista previa con URL.createObjectURL() y botón para quitarla con revokeObjectURL().
+ * - Sincroniza el archivo con DataTransfer para que viaje normalmente con el formulario.
  */
+
+const TIPOS_PERMITIDOS = ['image/jpeg', 'image/png', 'image/webp'];
+const TAMANO_MAXIMO = 2 * 1024 * 1024; // 2 MB (upload_max_filesize por defecto de PHP)
+
+const MENSAJES_DEFECTO = {
+  tipo: 'La tapa debe ser una imagen en formato JPG, PNG o WebP.',
+  tamano: 'La imagen no puede pesar más de 2 MB.',
+};
 
 export class ZonaArrastre {
   /**
@@ -29,6 +40,17 @@ export class ZonaArrastre {
 
     this.contenedor = contenedor;
     this.texto = contenedor.dataset.texto ?? 'Arrastrá la tapa acá o hacé clic para elegirla';
+    this.tiposPermitidos = contenedor.dataset.tipos
+      ? contenedor.dataset.tipos.split(',').map((t) => t.trim())
+      : TIPOS_PERMITIDOS;
+    this.tamanoMaximo = Number(contenedor.dataset.maxTamano) || TAMANO_MAXIMO;
+    this.mensajes = {
+      tipo: contenedor.dataset.errorTipo ?? MENSAJES_DEFECTO.tipo,
+      tamano: contenedor.dataset.errorTamano ?? MENSAJES_DEFECTO.tamano,
+    };
+
+    this.urlVistaPrevia = null;
+    this.sincronizando = false;
 
     this.armar();
     this.escuchar();
@@ -48,42 +70,67 @@ export class ZonaArrastre {
     this.zona.setAttribute('aria-label', this.texto);
 
     this.zona.innerHTML = `
-      <div class="zona-arrastre-icono" aria-hidden="true">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-          <circle cx="8.5" cy="8.5" r="1.5"/>
-          <polyline points="21 15 16 10 5 21"/>
-        </svg>
+      <div class="zona-arrastre-contenido">
+        <div class="zona-arrastre-icono" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+        <p class="zona-arrastre-instruccion">${this.texto}</p>
+        <p class="zona-arrastre-aviso" role="status" aria-live="assertive" hidden></p>
       </div>
-      <p class="zona-arrastre-instruccion">${this.texto}</p>
-      <p class="zona-arrastre-estado" aria-live="polite"></p>
-      <p class="zona-arrastre-aviso" role="status" aria-live="assertive" hidden></p>
+      <div class="zona-arrastre-preview" hidden>
+        <img class="zona-arrastre-img" alt="" src="">
+        <div class="zona-arrastre-detalles">
+          <p class="zona-arrastre-nombre"></p>
+          <p class="zona-arrastre-tamano"></p>
+          <button type="button" class="zona-arrastre-quitar" aria-label="Quitar imagen de tapa y elegir otra">
+            Quitar tapa
+          </button>
+        </div>
+      </div>
     `;
 
-    this.elEstado = this.zona.querySelector('.zona-arrastre-estado');
+    this.elContenido = this.zona.querySelector('.zona-arrastre-contenido');
+    this.elPreview = this.zona.querySelector('.zona-arrastre-preview');
+    this.elImg = this.zona.querySelector('.zona-arrastre-img');
+    this.elNombre = this.zona.querySelector('.zona-arrastre-nombre');
+    this.elTamano = this.zona.querySelector('.zona-arrastre-tamano');
+    this.elBotonQuitar = this.zona.querySelector('.zona-arrastre-quitar');
     this.elAviso = this.zona.querySelector('.zona-arrastre-aviso');
 
-    // Se inserta después del input o al final del contenedor.
+    // Se inserta después del input en el contenedor.
     this.input.after(this.zona);
   }
 
   // ---- Eventos y Comportamiento ------------------------------------------------------------
 
   escuchar() {
-    // 1. Apertura del selector al hacer clic sobre la zona.
-    this.zona.addEventListener('click', () => {
+    // 1. Apertura del selector al hacer clic sobre la zona (excepto si se clickea el botón de quitar).
+    this.zona.addEventListener('click', (e) => {
+      if (e.target.closest('.zona-arrastre-quitar')) return;
       this.input.click();
     });
 
     // 2. Accesibilidad por teclado: Enter o Barra Espaciadora abren el selector.
     this.zona.addEventListener('keydown', (e) => {
+      if (e.target.closest('.zona-arrastre-quitar')) return;
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         this.input.click();
       }
     });
 
-    // 3. Arrastre y soltado (Drag and Drop).
+    // 3. Botón para quitar la vista previa y elegir otra.
+    this.elBotonQuitar.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.quitar();
+      this.zona.focus();
+    });
+
+    // 4. Arrastre y soltado (Drag and Drop).
     let contadorArrastre = 0;
 
     this.zona.addEventListener('dragenter', (e) => {
@@ -121,23 +168,46 @@ export class ZonaArrastre {
       this.procesarArchivos(archivos);
     });
 
-    // 4. Cambio manual desde el selector del sistema operativo.
+    // 5. Cambio manual desde el selector nativo del sistema operativo.
     this.input.addEventListener('change', () => {
+      if (this.sincronizando) return;
       const archivos = this.input.files;
-      if (!archivos || archivos.length === 0) {
-        this.limpiarEstado();
-        return;
-      }
-      this.mostrarArchivo(archivos[0]);
-      this.limpiarAviso();
+      if (!archivos || archivos.length === 0) return;
+
+      this.procesarArchivos(archivos);
     });
+  }
+
+  // ---- Validación --------------------------------------------------------------------------
+
+  /**
+   * Controla tipo MIME / extensión y tamaño en bytes.
+   * Devuelve un string con el mensaje de error o '' si es válido.
+   * @param {File} archivo
+   * @returns {string}
+   */
+  validar(archivo) {
+    const extension = archivo.name.split('.').pop()?.toLowerCase() ?? '';
+    const extensionesValidas = ['jpg', 'jpeg', 'png', 'webp'];
+    const esTipoValido = this.tiposPermitidos.includes(archivo.type) || extensionesValidas.includes(extension);
+
+    if (!esTipoValido) {
+      return this.mensajes.tipo;
+    }
+
+    if (archivo.size > this.tamanoMaximo) {
+      return this.mensajes.tamano;
+    }
+
+    return '';
   }
 
   // ---- Procesamiento y Mensajes ------------------------------------------------------------
 
   /**
-   * Procesa los archivos soltados. Si se recibe más de uno, toma el primero y avisa.
-   * @param {FileList} archivos
+   * Procesa los archivos. Si sueltan varios toma el primero y avisa.
+   * Controla tipo y tamaño antes de aceptarlo.
+   * @param {FileList|File[]} archivos
    */
   procesarArchivos(archivos) {
     const primerArchivo = archivos[0];
@@ -149,36 +219,144 @@ export class ZonaArrastre {
       this.limpiarAviso();
     }
 
+    // Control de tipo y tamaño antes de aceptarlo.
+    const error = this.validar(primerArchivo);
+    if (error) {
+      // Un PDF o una imagen muy pesada muestra el error y no se carga.
+      this.quitar(false);
+      this.mostrarError(error);
+      return;
+    }
+
+    // Si es válido, se borran errores previos.
+    this.limpiarError();
+
     // Se asigna el archivo al input nativo usando DataTransfer.
     try {
       const dt = new DataTransfer();
       dt.items.add(primerArchivo);
       this.input.files = dt.files;
-    } catch (error) {
-      console.warn('ZonaArrastre: no se pudo asignar DataTransfer al input.', error);
+    } catch (err) {
+      console.warn('ZonaArrastre: no se pudo asignar DataTransfer al input.', err);
     }
 
-    this.mostrarArchivo(primerArchivo);
+    // Se dibuja la vista previa con URL.createObjectURL.
+    this.mostrarVistaPrevia(primerArchivo);
 
-    // Dispara el evento change para notificar a validadores y otros escuchadores.
-    this.input.dispatchEvent(new Event('change', { bubbles: true }));
-    this.input.dispatchEvent(new Event('input', { bubbles: true }));
+    // Notifica el cambio al formulario y otros escuchadores sin disparar recursión.
+    this.notificarCambio();
   }
 
   /**
-   * Muestra la información del archivo elegido en la zona.
+   * Muestra la vista previa del archivo creando una URL de objeto.
    * @param {File} archivo
    */
-  mostrarArchivo(archivo) {
+  mostrarVistaPrevia(archivo) {
+    if (this.urlVistaPrevia) {
+      URL.revokeObjectURL(this.urlVistaPrevia);
+      this.urlVistaPrevia = null;
+    }
+
+    this.urlVistaPrevia = URL.createObjectURL(archivo);
+    this.elImg.src = this.urlVistaPrevia;
+    this.elImg.alt = `Vista previa de la tapa: ${archivo.name}`;
+    this.elNombre.textContent = archivo.name;
     const tamanoKb = (archivo.size / 1024).toFixed(0);
-    this.elEstado.textContent = `Archivo seleccionado: ${archivo.name} (${tamanoKb} KB)`;
-    this.zona.classList.add('con-archivo');
+    this.elTamano.textContent = `${tamanoKb} KB`;
+
+    this.elContenido.hidden = true;
+    this.elPreview.hidden = false;
+    this.zona.classList.add('con-preview', 'con-archivo');
   }
 
   /**
-   * Muestra un aviso relevante (por ejemplo, al soltar múltiples archivos).
-   * @param {string} mensaje
+   * Quita la vista previa, libera la URL con revokeObjectURL y vacía el input.
+   * @param {boolean} limpiarError Si también se debe resetear el error mostrado.
    */
+  quitar(limpiarError = true) {
+    if (this.urlVistaPrevia) {
+      URL.revokeObjectURL(this.urlVistaPrevia);
+      this.urlVistaPrevia = null;
+    }
+
+    this.elImg.src = '';
+    this.elImg.alt = '';
+    this.elNombre.textContent = '';
+    this.elTamano.textContent = '';
+
+    this.elPreview.hidden = true;
+    this.elContenido.hidden = false;
+    this.zona.classList.remove('con-preview', 'con-archivo');
+
+    this.input.value = '';
+    try {
+      this.input.files = new DataTransfer().files;
+    } catch {}
+
+    this.limpiarAviso();
+    if (limpiarError) {
+      this.limpiarError();
+    }
+
+    this.notificarCambio();
+  }
+
+  notificarCambio() {
+    this.sincronizando = true;
+    this.input.dispatchEvent(new Event('change', { bubbles: true }));
+    this.input.dispatchEvent(new Event('input', { bubbles: true }));
+    this.sincronizando = false;
+  }
+
+  // ---- Manejo de errores en línea (igual que validador.js) ----------------------------------
+
+  idDeError() {
+    return `error-${this.input.name}`;
+  }
+
+  elementoDeError() {
+    let p = document.getElementById(this.idDeError());
+    if (!p) {
+      p = document.createElement('p');
+      p.id = this.idDeError();
+      p.className = 'error-campo';
+      (this.input.closest('.campo') ?? this.contenedor).append(p);
+    }
+    return p;
+  }
+
+  mostrarError(mensaje) {
+    const p = this.elementoDeError();
+    p.textContent = mensaje;
+    p.hidden = false;
+    this.input.setAttribute('aria-invalid', 'true');
+    this.zona.setAttribute('aria-invalid', 'true');
+    this.describir(p.id, true);
+  }
+
+  limpiarError() {
+    const p = document.getElementById(this.idDeError());
+    if (p) {
+      p.textContent = '';
+      p.hidden = true;
+    }
+    this.input.removeAttribute('aria-invalid');
+    this.zona.removeAttribute('aria-invalid');
+    this.describir(this.idDeError(), false);
+  }
+
+  describir(id, incluir) {
+    for (const el of [this.input, this.zona]) {
+      const ids = new Set((el.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean));
+      if (incluir) ids.add(id);
+      else ids.delete(id);
+      if (ids.size) el.setAttribute('aria-describedby', [...ids].join(' '));
+      else el.removeAttribute('aria-describedby');
+    }
+  }
+
+  // ---- Avisos secundarios ------------------------------------------------------------------
+
   avisar(mensaje) {
     this.elAviso.textContent = mensaje;
     this.elAviso.hidden = false;
@@ -187,11 +365,5 @@ export class ZonaArrastre {
   limpiarAviso() {
     this.elAviso.textContent = '';
     this.elAviso.hidden = true;
-  }
-
-  limpiarEstado() {
-    this.elEstado.textContent = '';
-    this.zona.classList.remove('con-archivo');
-    this.limpiarAviso();
   }
 }
