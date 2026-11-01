@@ -666,3 +666,99 @@
     padding: var(--sp-2);
   }
 }
+
+/* Lo que el JS oculta con el atributo hidden (los botones «Aplicar Filtros» y «Actualizar», el
+   aviso del rango de precio) tiene que quedar oculto aunque sus reglas le den otro display. */
+.page-catalogo [hidden] {
+  display: none !important;
+}
+
+/* ================================================================
+   6. FILTROS PLEGABLES Y CONTROLES PARA EL CELULAR (TP4)
+   El botón «Filtros» lo agrega el JS: sin JS no existe y los
+   filtros quedan siempre a la vista.
+   ================================================================ */
+.page-catalogo .boton-filtros {
+  display: none; /* En pantallas grandes los filtros están siempre abiertos */
+}
+
+@media (max-width: 900px) {
+  /* El botón reemplaza al título del panel, que queda sólo para los lectores de pantalla */
+  .page-catalogo aside:has(.boton-filtros) #titulo-filtros {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .page-catalogo .boton-filtros {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 44px;
+    padding: var(--sp-2) var(--sp-4);
+    border: 1px solid var(--border-v);
+    border-radius: var(--r-md);
+    background: var(--v50);
+    color: var(--v800);
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* Flecha que gira según el panel esté abierto o cerrado */
+  .page-catalogo .boton-filtros::after {
+    content: "▾";
+    transition: transform var(--ease);
+  }
+
+  .page-catalogo .boton-filtros[aria-expanded="true"] {
+    margin-bottom: var(--sp-5);
+  }
+
+  .page-catalogo .boton-filtros[aria-expanded="true"]::after {
+    transform: rotate(180deg);
+  }
+
+  .page-catalogo aside[data-plegado] form {
+    display: none;
+  }
+
+  .page-catalogo aside[aria-labelledby="titulo-filtros"]:has(.boton-filtros) {
+    padding: var(--sp-3);
+  }
+
+  /* Controles de 44 × 44 px como mínimo, cómodos de tocar */
+  .page-catalogo aside fieldset li {
+    min-height: 44px;
+  }
+
+  .page-catalogo aside fieldset input[type="radio"] {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+
+  .page-catalogo aside fieldset label {
+    min-height: 44px;
+  }
+
+  .page-catalogo aside button[type="submit"],
+  .page-catalogo main > section:nth-of-type(1) search input[type="search"],
+  .page-catalogo main > section:nth-of-type(1) search button,
+  .page-catalogo section[aria-labelledby="titulo-lista-libros"] form select,
+  .page-catalogo section[aria-labelledby="titulo-lista-libros"] form button {
+    min-height: 44px;
+  }
+
+  .page-catalogo nav[aria-label="Paginado del catálogo"] a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

@@ -178,7 +178,35 @@ export class FiltrosCatalogo {
     }
 
     this.estado = estadoDesde(window.location.search);
+    this.plegarFiltros();
     this.cargar(contenedor.dataset.catalogoJson);
+  }
+
+  /**
+   * En pantallas chicas los filtros arrancan plegados detrás de un botón «Filtros». Cuándo se
+   * pliegan lo decide el CSS (900 px o menos, cuando el panel se apila sobre el listado): en
+   * pantallas grandes el botón no se ve y los filtros siempre están abiertos. No depende de que
+   * llegue el JSON: plegar sirve aunque los filtros sigan recargando la página.
+   */
+  plegarFiltros() {
+    const panel = this.filtros.closest('aside');
+    if (!panel) {
+      return;
+    }
+    const boton = Object.assign(document.createElement('button'), {
+      type: 'button',
+      className: 'boton-filtros',
+      textContent: 'Filtros',
+    });
+    boton.setAttribute('aria-controls', this.filtros.id);
+    boton.setAttribute('aria-expanded', 'false');
+    panel.dataset.plegado = '';
+    boton.addEventListener('click', () => {
+      const abrir = boton.getAttribute('aria-expanded') === 'false';
+      boton.setAttribute('aria-expanded', String(abrir));
+      panel.toggleAttribute('data-plegado', !abrir);
+    });
+    this.filtros.before(boton);
   }
 
   /** Trae el catálogo una sola vez. Si algo falla, la página queda como la dejó el servidor. */
