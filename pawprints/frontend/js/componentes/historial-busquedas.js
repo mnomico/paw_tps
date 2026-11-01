@@ -129,3 +129,4 @@ export class HistorialBusquedas {
 for (const campo of document.querySelectorAll('#busqueda, #buscar-catalogo')) {
   new HistorialBusquedas(campo);
 }
+
