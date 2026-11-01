@@ -18,10 +18,11 @@ return static function (Router $router): void {
     $router->get('/', [HomeController::class, 'index']);
     $router->get('/sobre-nosotros', [SobreNosotrosController::class, 'index']);
 
-    // El catálogo y la ficha de cada libro. El CSV es otra representación del mismo listado, y
-    // por eso es otra ruta y no un parámetro: identifica al recurso, no a la vista.
+    // El catálogo y la ficha de cada libro. El CSV y el JSON son otras representaciones del mismo
+    // listado, y por eso son otras rutas y no un parámetro: identifican al recurso, no a la vista.
     $router->get('/catalogo', [CatalogoController::class, 'index']);
     $router->get('/catalogo/csv', [CatalogoController::class, 'csv']);
+    $router->get('/catalogo/json', [CatalogoController::class, 'json']);
 
     // La carga de libros nuevos del TP4. Va antes que /libros/{id}: el router se queda con la
     // primera ruta que coincide, y {id} también atraparía «nuevo».

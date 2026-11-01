@@ -35,18 +35,6 @@ final class LibroRepository extends JsonRepository implements CatalogoDeLibros
     public const POR_PAGINA = self::CANTIDADES[0];
 
     /**
-     * Los rangos de precio de la barra de filtros: valor de la query => [mínimo, máximo] en pesos.
-     * Son los tres del wireframe; null es «sin límite».
-     *
-     * @var array<string, array{0: int, 1: int|null}>
-     */
-    public const RANGOS = [
-        'hasta-15000' => [0, 14999],
-        '15000-20000' => [15000, 20000],
-        'desde-20000' => [20001, null],
-    ];
-
-    /**
      * El catálogo entero, en el orden del archivo.
      *
      * @return list<Libro>
@@ -96,8 +84,13 @@ final class LibroRepository extends JsonRepository implements CatalogoDeLibros
      * Un filtro que no corresponde a nada del catálogo no es un error: deja la lista vacía, que es
      * lo que se le muestra a la persona. Un orden desconocido, en cambio, cae en el de por defecto.
      *
+     * El precio se acota con `precio_desde` y `precio_hasta`, en pesos e inclusivos: un monto
+     * vacío o que no es un número entero es «sin límite», y si el mínimo supera al máximo el
+     * filtro de precio no se aplica, porque no hay forma de saber cuál de los dos quiso decir.
+     *
      * @param array{q?: string|null, genero?: string|null, formato?: string|null,
-     *              precio?: string|null, orden?: string|null} $filtros tal como llegan de la query
+     *              precio_desde?: string|null, precio_hasta?: string|null,
+     *              orden?: string|null} $filtros tal como llegan de la query
      *
      * @return list<Libro>
      */
@@ -106,13 +99,18 @@ final class LibroRepository extends JsonRepository implements CatalogoDeLibros
         $buscado = self::normalizar((string) ($filtros['q'] ?? ''));
         $genero = (string) ($filtros['genero'] ?? '');
         $formato = (string) ($filtros['formato'] ?? '');
-        $rango = self::RANGOS[(string) ($filtros['precio'] ?? '')] ?? null;
+        $minimo = self::monto($filtros['precio_desde'] ?? null);
+        $maximo = self::monto($filtros['precio_hasta'] ?? null);
+        if ($minimo !== null && $maximo !== null && $minimo > $maximo) {
+            $minimo = $maximo = null;
+        }
 
         $libros = array_values(array_filter($this->todos(), static function (array $libro) use (
             $buscado,
             $genero,
             $formato,
-            $rango,
+            $minimo,
+            $maximo,
         ): bool {
             if ($buscado !== '' && !str_contains(self::indice($libro), $buscado)) {
                 return false;
@@ -124,20 +122,55 @@ final class LibroRepository extends JsonRepository implements CatalogoDeLibros
                 return false;
             }
 
-            return $rango === null
-                || ($libro['precio'] >= $rango[0] && ($rango[1] === null || $libro['precio'] <= $rango[1]));
+            return ($minimo === null || $libro['precio'] >= $minimo)
+                && ($maximo === null || $libro['precio'] <= $maximo);
         }));
 
-        // El orden de por defecto es el del catálogo, que no necesita ordenar nada.
-        match ((string) ($filtros['orden'] ?? '')) {
-            'precio-asc' => usort($libros, static fn (array $a, array $b): int => $a['precio'] <=> $b['precio']),
-            'precio-desc' => usort($libros, static fn (array $a, array $b): int => $b['precio'] <=> $a['precio']),
-            'titulo-az' => usort(
-                $libros,
-                static fn (array $a, array $b): int => self::normalizar($a['titulo']) <=> self::normalizar($b['titulo']),
-            ),
+        return self::ordenar($libros, (string) ($filtros['orden'] ?? ''));
+    }
+
+    /** Un monto en pesos de la query, o null si está vacío o no es un entero no negativo. */
+    private static function monto(?string $valor): ?int
+    {
+        $monto = filter_var(
+            trim((string) $valor),
+            FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => 0]],
+        );
+
+        return $monto === false ? null : $monto;
+    }
+
+    /**
+     * Ordena por título, autor o precio, en forma ascendente (`-asc`) o descendente (`-desc`). El
+     * autor va por el nombre tal como está escrito, no por apellido, y los textos se comparan sin
+     * tildes ni mayúsculas. usort es estable desde PHP 8.0: los empates quedan en el orden del
+     * catálogo. Un orden desconocido, «recomendados» incluido, deja el orden del catálogo.
+     *
+     * @param list<Libro> $libros
+     *
+     * @return list<Libro>
+     */
+    private static function ordenar(array $libros, string $orden): array
+    {
+        $partes = explode('-', $orden);
+        if (count($partes) !== 2 || !in_array($partes[1], ['asc', 'desc'], true)) {
+            return $libros;
+        }
+        [$campo, $sentido] = $partes;
+
+        $clave = match ($campo) {
+            'titulo', 'autor' => static fn (array $libro): string =>
+                self::normalizar($libro[$campo]),
+            'precio' => static fn (array $libro): int => $libro['precio'],
             default => null,
         };
+        if ($clave === null) {
+            return $libros;
+        }
+
+        $signo = $sentido === 'asc' ? 1 : -1;
+        usort($libros, static fn (array $a, array $b): int => $signo * ($clave($a) <=> $clave($b)));
 
         return $libros;
     }
