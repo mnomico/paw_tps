@@ -56,6 +56,10 @@ $formatoActivo = $filtros['formato'] ?? '';
 $precioActivo = $filtros['precio'] ?? '';
 $ordenActivo = $filtros['orden'] ?? '';
 
+// El tramo del listado que se ve en esta página, contado desde 1.
+$desde = ($pagina - 1) * $porPagina + 1;
+$hasta = $desde + count($libros) - 1;
+
 // Un identificador válido para el id de cada control, a partir del valor del filtro.
 $slug = static fn (string $valor): string => preg_replace('/[^a-z0-9]+/', '-', strtolower(
     strtr($valor, ['á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ñ' => 'n', '&' => 'y']),
@@ -159,16 +163,14 @@ $slug = static fn (string $valor): string => preg_replace('/[^a-z0-9]+/', '-', s
       <section aria-labelledby="titulo-lista-libros">
         <h3 id="titulo-lista-libros">Resultados</h3>
 
+        <!-- «Mostrando X–Y de Z»: qué tramo del listado se ve y cuántos libros hay en total. El
+             JS del catálogo arma este mismo texto cuando redibuja el listado. -->
         <p>
-          Mostrando <strong><?= $total ?> <?= $total === 1 ? 'libro' : 'libros' ?></strong>
-          <?php if ($buscado !== ''): ?>
-          para <em>«<?= htmlspecialchars($buscado) ?>»</em>
-          <?php endif; ?>
-          <?php if ($generoActivo !== ''): ?>
-          de <em><?= htmlspecialchars($generoActivo) ?></em>
-          <?php endif; ?>
-          <?php if ($paginas > 1): ?>
-          — página <?= $pagina ?> de <?= $paginas ?>
+          <?php if ($total === 0): ?>
+          Mostrando <strong>0 libros</strong>
+          <?php else: ?>
+          Mostrando <strong><?= $desde ?>–<?= $hasta ?></strong> de
+          <strong><?= $total ?> <?= $total === 1 ? 'libro' : 'libros' ?></strong>
           <?php endif; ?>
         </p>
 
