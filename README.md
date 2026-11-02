@@ -713,6 +713,64 @@ Cómo se comporta:
   otra página: reenviarla no duplica nada.
 - **La tapa** se carga con el componente de arrastrar y soltar de la consigna 3.
 
+### Publicación
+
+El TP4 está en la misma dirección que el TP3, **<https://3-23-199-91.sslip.io>**, y en el mismo
+servidor, armado como dice el [punto 7 del TP3](#7-publicación). Para pasar a esta versión se
+corrió, como `ubuntu`:
+
+```bash
+cd /var/www/pawprints
+sudo git remote set-url origin https://github.com/cerberus-paw/pawprints_tps.git
+sudo git pull --ff-only origin main
+```
+
+El repositorio cambió de dirección: la anterior redirige, pero el servidor queda apuntando a la
+actual. `config.ini` no se tocó, porque el ejemplo tiene las mismas claves que en el TP3.
+
+Archivos de configuración que se modificaron:
+
+| Archivo | Cambio |
+| --- | --- |
+| `/etc/apache2/sites-available/pawprints.conf` y `pawprints-le-ssl.conf` | `DirectoryIndex index.php` dentro del `<Directory>` |
+
+```apache
+    <Directory /var/www/pawprints/pawprints/frontend>
+        Require all granted
+        Options -Indexes
+        DirectoryIndex index.php
+        FallbackResource /index.php
+    </Directory>
+```
+
+```bash
+sudo apache2ctl configtest && sudo systemctl reload apache2
+```
+
+En `frontend/` siguen las maquetas del TP2, entre ellas `index.html`, y Apache, para `/`, prefiere
+`index.html` antes que `index.php`. Sin esa línea, el inicio publicado era la maqueta y no la
+página del MVC con el carrusel. En desarrollo no pasa porque el servidor de PHP prueba primero
+`index.php`.
+
+Para actualizar el sitio con una versión nueva sigue alcanzando con
+`cd /var/www/pawprints && sudo git pull --ff-only`. Apache sirve los módulos con
+`Content-Type: text/javascript`, que es lo que necesita el navegador para ejecutarlos.
+
+Cómo se comprobó que anda (desde otra máquina):
+
+```bash
+U=https://3-23-199-91.sslip.io
+curl -sI http://3-23-199-91.sslip.io/ | head -1                       # 301 a https
+for r in / /sobre-nosotros /catalogo "/catalogo?q=baez" /catalogo/csv /catalogo/json /libros/1 \
+         /libros/nuevo /reserva; do
+  printf '%-18s %s\n' "$r" "$(curl -s -o /dev/null -w '%{http_code}' "$U$r")"
+done                                                                  # todas 200
+curl -s -o /dev/null -w '%{http_code}\n' $U/libros/9999                # 404
+curl -s -o /dev/null -w '%{http_code}\n' $U/backend/config/config.ini  # 404
+curl -s $U/ | grep -c 'class="carrusel"'                              # 1: el inicio es el del MVC
+curl -s -o /dev/null -w '%{content_type}\n' $U/js/paginas/inicio.js   # text/javascript
+```
+
 ## Entorno de desarrollo
 
 | Componente | Versión |
