@@ -728,6 +728,17 @@ sudo git pull --ff-only origin main
 El repositorio cambió de dirección: la anterior redirige, pero el servidor queda apuntando a la
 actual. `config.ini` no se tocó, porque el ejemplo tiene las mismas claves que en el TP3.
 
+Las tapas que se suben desde el formulario de libros nuevos se guardan en
+`pawprints/frontend/img/tapas/`, que tiene que poder escribir Apache:
+
+```bash
+sudo chown www-data:www-data pawprints/frontend/img/tapas
+```
+
+La carpeta viene en el repositorio, con un `.gitkeep`, y Git ignora lo que tiene adentro, así que
+actualizar el sitio no pisa ni borra las tapas subidas. Los límites de PHP quedan como vienen:
+`upload_max_filesize` es `2M`, justo el máximo que acepta la tapa, y `post_max_size` es `8M`.
+
 Archivos de configuración que se modificaron:
 
 | Archivo | Cambio |
@@ -769,6 +780,12 @@ curl -s -o /dev/null -w '%{http_code}\n' $U/libros/9999                # 404
 curl -s -o /dev/null -w '%{http_code}\n' $U/backend/config/config.ini  # 404
 curl -s $U/ | grep -c 'class="carrusel"'                              # 1: el inicio es el del MVC
 curl -s -o /dev/null -w '%{content_type}\n' $U/js/paginas/inicio.js   # text/javascript
+```
+
+Y en el servidor, después de cargar un libro con tapa desde el sitio:
+
+```bash
+ls -l /var/www/pawprints/pawprints/frontend/img/tapas/   # la tapa, con dueño www-data
 ```
 
 ## Entorno de desarrollo
